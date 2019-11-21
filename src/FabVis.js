@@ -2,12 +2,12 @@ let width;
 let height = 1200;
 let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#ef3ccf",
                 "#a02006", "#54f04c"];
-let buttons = [{label: "Developed", width: 120, class: "dev"},
-                {label: "Developing", width: 130, class: "dev-ing"},
+let buttons = [{label: "Developed", width: 180, class: "dev"},
+                {label: "Developing", width: 180, class: "dev-ing"},
                 {label: "Underdeveloped", width: 180, class: "undev"},
-                {label: "Happiness", width: 125, class: "happy"},
-                {label: "Living Index", width: 150, class: "livindex"},
-                {label: "Reset", width: 80, class: "reset"}];
+                {label: "Happiness Index", width: 180, class: "happy"},
+                {label: "Living Index", width: 180, class: "livindex"},
+                {label: "Reset", width: 180, class: "reset"}];
 var legend, hoverData, legendTitle;
 
 
@@ -19,6 +19,7 @@ width = document.body.clientWidth;
     .attr('width', width)
     .attr('height', height)
     .style("background-color","#182aa5");
+
 
   var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/9);
   var path = d3.geoPath().projection(projection);
@@ -47,36 +48,12 @@ width = document.body.clientWidth;
   var data = d3.map();
 
   const colorHappy = d3.scaleThreshold()
-      .domain([3.4,3.5,3.6,3.7
-              ,3.8,3.9,4.0,4.1
-              ,4.2,4.3,4.4,4.5
-              ,4.6,4.7,4.8,4.9
-              ,5.0,5.1,5.2,5.3
-              ,5.4,5.5,5.6,5.7
-              ,5.8,5.9,6.0,6.1
-              ,6.2,6.3,6.4,6.5
-              ,6.6,6.7,6.8,6.9
-              ,7.0,7.1,7.2,7.3
-              ,7.4,7.5,7.6]) //15
-      .range(['#ffffe0', '#fff9db', '#fff3d7', '#ffecd2',
-              '#ffe6cd', '#ffe0c9', '#ffdac4', '#ffd3bf',
-              '#ffcdba', '#ffc6b6', '#ffc0b1', '#ffb9ac',
-              '#ffb3a7', '#ffaca3', '#ffa59e', '#ff9e99',
-              '#fe9794', '#fd9190', '#fb8a8c', '#f98488',
-              '#f67e83', '#f4777f', '#f1717b', '#ee6b77',
-              '#eb6574', '#e85e70', '#e5586c', '#e15268',
-              '#dd4c65', '#da4661', '#d5405e', '#d13a5a',
-              '#cd3357', '#c82d54', '#c32750', '#be214d',
-              '#b81b4a', '#b31547', '#ad0e44', '#a70842',
-              '#a1043f', '#9a013c', '#93003a']);
+      .domain([3, 4, 5, 6, 7, 8]) //15
+      .range(d3.schemeSet1);
 
   const colorLiving = d3.scaleThreshold()
-      .domain([30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110]) //17
-      .range(['#ffef6d', '#f9e166', '#f4d45e', '#efc757',
-              '#e9ba50', '#e3ad48', '#dda041', '#d7933a',
-              '#d18633', '#ca792d', '#c46b26', '#bd5e1f',
-              '#b65019', '#af4212', '#a8320c', '#a02006',
-              '#980001']);
+      .domain([30, 40, 50, 60, 70, 80, 90, 100, 110]) //17
+      .range(d3.schemeSet3);
 
 
   // load data
