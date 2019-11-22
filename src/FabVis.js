@@ -27,6 +27,11 @@ width = document.body.clientWidth;
   var path = d3.geoPath().projection(projection);
   var g = svg.append('g');
 
+  var searchbtn = document.getElementById("searchBtn");
+    console.log(searchbtn);
+    searchbtn.onclick = search;
+
+
   var bigText = g.append('text')
       .attr('x', 20)
       .attr('y', 50);
@@ -64,6 +69,66 @@ width = document.body.clientWidth;
   // load data
   var worldmap = d3.json("countries.geojson");
   var countries = d3.csv("Data.csv");
+
+    function search() {
+        if(firstime){
+            var countryN = document.getElementById("countryN");
+            let capitalizedC = capitalizeFLetter(countryN);
+            //  console.log(capitalizedC);
+            let elemId = ".continent-" + capitalizedC;
+            console.log(elemId);
+            prevCountry = elemId;
+            let countryLabel = d3.select(elemId);
+            // var x = document.getElementsByClassName(elemId);
+            // let help = getComputedStyle(x);
+            //prevColour = help.style.fill;
+            prevColour = countryLabel.style('fill');
+            console.log(prevColour)
+            countryLabel.style('fill', '#fffdf8');
+            countryLabel.style("opacity", 1)
+            countryLabel.style('stroke', '#000000');
+            countryLabel.style('stroke-width', 2);
+            firstime = false;
+        }
+
+        else{
+            let countryLabel = d3.select(prevCountry);
+            countryLabel.style('fill', prevColour);
+            countryLabel.style("opacity", 0.5);
+            countryLabel.style("stroke", "transparent");
+
+            var countryN = document.getElementById("countryN");
+            let capitalizedC = capitalizeFLetter(countryN);
+            let elemId = ".continent-" + capitalizedC;
+            prevCountry = elemId;
+            countryLabel = d3.select(elemId);
+            // var x = document.getElementsByClassName(elemId);
+            // let help = getComputedStyle(countryLabel);
+            //prevColour = help.style.fill;
+            prevColour = countryLabel.style('fill');
+            console.log(prevColour);
+            countryLabel.style('fill', '#fffdf8');
+            countryLabel.style("opacity", 1)
+            countryLabel.style('stroke', '#000000');
+            countryLabel.style('stroke-width', 2);
+        }
+    }
+
+    function capitalizeFLetter(countryN) {
+        let string = countryN.value;
+        if(string === "usa" || string === "USA" || string === "united states" || string === "united states of america" || string === "US" || string === "us")
+        {
+            console.log("here?");
+            let string2 = "United States of America ";
+            return string2;
+        }
+        else {
+            //    console.log(countryN.value + " in func")
+            let string2 = string[0].toUpperCase() + string.slice(1);
+            // console.log(string2);
+            return string2;
+        }
+    }
 
 
   Promise.all([worldmap, countries]).then(function (values) {
@@ -132,7 +197,6 @@ width = document.body.clientWidth;
         return d && d.properties ? d.properties.developStatus : null;
     }
 
-
     function mouseOver(d) {
         d3.selectAll(".Country")
           .transition()
@@ -151,7 +215,7 @@ width = document.body.clientWidth;
             .duration(100)
             .style("opacity", .90);
 
-          tooltip.html("Cost Living Index: " + d.properties.livingIndex + "\n" + "Happiness Score: " + d.properties.happinessRank)
+          tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex + "<br />" + "Happiness Score: " + d.properties.happinessRank)
             .style("left", (d3.event.pageX) + "px")
             .style("font-size", "17px")
             .style("font-weight", "bold")
@@ -194,17 +258,19 @@ width = document.body.clientWidth;
             .style("stroke", "black")
     }
 
-    //ZOOM STUFF, TO BE FIXED
-    //--------------------------------------------------------------------------------------------------------------------------
-      function zoomFunction() {
-          var transform = d3.zoomTransform(this);
-          d3.select("#continent")
-              svg.attr("transform", "translate(" + transform.x * 4 +  "," + transform.y * 4 + ") scale(" + transform.k*4 + ")");
-      }
-
-      var zoom = d3.zoom()
-          .on("zoom", zoomFunction);
-    //--------------------------------------------------------------------------------------------------------------------------
+    // //ZOOM STUFF, TO BE FIXED
+    // //--------------------------------------------------------------------------------------------------------------------------
+    //   function zoomFunction() {
+    //       var transform = d3.zoomTransform(this);
+    //       d3.select("#continent")
+    //           svg.transition().duration(800).attr("transform", "translate(" + transform.x/3 +  "," + transform.y + ") scale(" + transform.k/2+ ")");
+    //   }
+    //
+    //   var zoom = d3.zoom()
+    //       .scaleExtent([0.05, 5])
+    //       .translateExtent([[0, 0], [width, height]])
+    //       .on("zoom", zoomFunction);
+    // //--------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -213,7 +279,7 @@ width = document.body.clientWidth;
       .data(values[0].features)
       .enter()
       .append("path")
-        .attr("class", "continent")
+        .attr("class", d => "continent-" + d.properties.name)
         .attr("d", path)
         .attr("fill", function (d) {
           if (developmentStatus(d) == "Developed") {
@@ -238,7 +304,8 @@ width = document.body.clientWidth;
         // .call(d3.zoom().on("zoom", function () {
         //     // svg.attr("transform", d3.event.transform)
         // }))
-        .call(zoom)
+        //.call(zoom)
+        //.append(g)
         //--------------------------------------------------------------------------------------------------------------------------
   .     style("stroke", "transparent")
         .style("opacity", 0.6);
