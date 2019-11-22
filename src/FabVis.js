@@ -48,7 +48,7 @@ width = document.body.clientWidth;
 
   var data = d3.map();
 
-  const colorHappy = d3.scaleThreshold()
+    const colorHappy = d3.scaleThreshold()
       .domain([3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
       .range(['#001225', '#042739', '#073c4f', '#0a5366',
             '#0c6b7e', '#0d8496', '#0d9daf', '#0bb8c9',
@@ -119,7 +119,6 @@ width = document.body.clientWidth;
         .on('click', (d, i) => {
           filterMap(d, i);
         });
-
 
     function countryName(d) {
         return d && d.properties ? d.properties.name : null;
@@ -195,6 +194,18 @@ width = document.body.clientWidth;
             .style("stroke", "black")
     }
 
+    //ZOOM STUFF, TO BE FIXED
+    //--------------------------------------------------------------------------------------------------------------------------
+      function zoomFunction() {
+          var transform = d3.zoomTransform(this);
+          d3.select("#continent")
+              svg.attr("transform", "translate(" + transform.x * 4 +  "," + transform.y * 4 + ") scale(" + transform.k*4 + ")");
+      }
+
+      var zoom = d3.zoom()
+          .on("zoom", zoomFunction);
+    //--------------------------------------------------------------------------------------------------------------------------
+
 
 
     // draw map
@@ -222,9 +233,15 @@ width = document.body.clientWidth;
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
         .on("click", clicked)
-        .style("stroke", "transparent")
+        // ZOOM STUFF, TO BE FIXED
+        //--------------------------------------------------------------------------------------------------------------------------
+        // .call(d3.zoom().on("zoom", function () {
+        //     // svg.attr("transform", d3.event.transform)
+        // }))
+        .call(zoom)
+        //--------------------------------------------------------------------------------------------------------------------------
+  .     style("stroke", "transparent")
         .style("opacity", 0.6);
-
 
     d3.selectAll('path').style('fill', colours[5]);
 
@@ -251,7 +268,6 @@ width = document.body.clientWidth;
       }
     }
 
-
     function addText(text, text1) {
         bigText
             .style('font-family', "Arial")
@@ -265,7 +281,7 @@ width = document.body.clientWidth;
     }
 
 
-    // draw legend Happiness
+      // draw legend Happiness
     var legend = svg.selectAll(".legend")
         .data(colorHappy.domain())
         .enter().append("g")
