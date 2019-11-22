@@ -143,7 +143,7 @@ prevColours = [];
           .transition()
           .duration(200)
           .style("opacity", 1)
-          .style('stroke-width', 2.5);
+          .style('stroke-width', 3);
 
         addText(countryName(d), continentName(d));
 
@@ -169,7 +169,7 @@ prevColours = [];
               if (clickedCountries.includes(d.id)) return 1.0;
               return 0.6;
             })
-            .style('stroke-width', 0.5);
+            .style('stroke-width', 0.8);
       //Clear province name
       bigText.text('');
       bigText1.text('');
@@ -245,7 +245,8 @@ prevColours = [];
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
         .on("click", clicked)
-        //.style("stroke", "transparent")
+        .style("stroke", "black")
+        .style("stroke-width", 0.8)
         .style("opacity", 0.6);
 
     d3.selectAll('path').style('fill', colours[5]);
