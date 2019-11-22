@@ -28,7 +28,6 @@ div.tooltip {
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		font-weight: 300;
 		font-size: 50px;
-		fill: yellow;
 		stroke: black;
 		stroke-width: 1;
 }
@@ -37,7 +36,6 @@ div.tooltip {
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		font-weight: bolder;
 		font-size: 17px;
-		fill: yellow;
 		stroke: black;
 		stroke-width: 0;
 }
@@ -46,7 +44,6 @@ div.tooltip {
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		font-weight: bolder;
 		font-size: 22px;
-		fill: yellow;
 		stroke: black;
 		stroke-width: 0.3;
 }
