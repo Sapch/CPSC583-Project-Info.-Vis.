@@ -1,0 +1,178 @@
+<!-- resources used:
+TA practice codes
+https://bl.ocks.org/
+-->
+
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <link rel="stylesheet" type="text/css" href="2ndvis.css" />
+
+    <!-- Load color -->
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+</head>
+<body>
+<h1>    Countries GDP per capita vs Happiness Score and Gini Coeff.</h1>
+
+<svg width="1500" height="900"></svg>
+
+
+<script>
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 10, right: 20, bottom: 50, left: 50},
+        width = 1500 - margin.left - margin.right,
+        height = 900 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select("svg"),
+        margin = {top: 50, right: 20, bottom: 100, left: 80},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //Read the data
+    d3.csv("Data.csv", function(data) {
+
+        // Add X axis
+        var x = d3.scaleLinear()
+            .domain([20, 65])
+            .range([ 0, width ]);
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+            .domain([3.5, 8.5])
+            .range([ height, 0]);
+
+
+        // Add a scale for bubble size
+        var z = d3.scaleLinear()
+            .domain([0, 140000])
+            .range([5, 70]);
+
+        // Add a scale for bubble color
+        const myColor = d3.scaleOrdinal()
+            .domain(["Africa", "Asia", "Europe", "North America", "South America", "Oceania"])
+            .range(d3.schemeSet1);
+
+        g.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .append("text")
+            .attr("y", 75)
+            .attr("x", 800)
+            .attr("dy", "4em")
+            .attr("y", y(y.ticks().pop()))
+            .attr("fill", "#000")
+            .attr("font-size", 20)
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "end")
+            .text("Gini Coefficient (economic inequality)");
+
+        g.append("g")
+            .call(d3.axisLeft(y))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 0)
+            .attr("dy", "-3em")
+            .attr("y", y(y.ticks().pop()) + 1)
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("font-size", 20)
+            .attr("text-anchor", "end")
+            .text("Happiness Score");
+
+
+
+        var keys = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"];
+
+        var color = d3.scaleOrdinal()
+            .domain(keys)
+            .range(d3.schemeSet1);
+
+        //legend
+        var size = 30
+        svg.selectAll("mydots")
+            .data(keys)
+            .enter()
+            .append("rect")
+            .attr("x", 1300)
+            .attr("y", function(d,i){ return 50 + i*(size+5)})
+            .attr("width", size)
+            .attr("height", size)
+            .style("fill", function(d){ return color(d)});
+
+
+
+        svg.selectAll("labels")
+            .data(keys)
+            .enter()
+            .append("text")
+            .attr("x", 1300 + size*1.2)
+            .attr("y", function(d,i){ return 50 + i*(size+5) + (size/2)})
+            .text(function(d){ return d})
+            .attr("fill", "#000")
+            .attr("text-anchor", "left")
+            .attr("font-weight", "bold")
+            .style("alignment-baseline", "middle");
+
+
+
+
+        // Add dots and Circle for GDP
+        svg.append("g")
+            .selectAll("dot")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return x(d.Gini); } )
+            .attr("cy", function (d) { return y(d.Happiness); } )
+            .attr("r", function (d) { return z(d.GDP); } )
+            .style("fill", function (d) { return myColor(d.Continent); } )
+            .style("opacity", "0.7")
+            .attr("stroke", "white")
+            .style("stroke-width", "2px")
+            .on("mouseover", function() { tooltip.style("display", null); })
+            .on("mousemove", function(d) {
+                var xPosition = 800;
+                var yPosition = 100;
+                tooltip
+                    .attr("transform", "translate(" + xPosition + "," + yPosition + ")")
+                    .style("display", "inline")
+                    .select("text").text(d.Country + " $"+ d.GDP/1000+"K");
+
+            })
+            .on("mouseout", function() { tooltip.style("display", "none"); });
+
+
+        var tooltip = d3.select("svg").append("g")
+            .attr("class", "tooltip")
+            .style("display", "none");
+
+
+        tooltip.append("text")
+            .attr("x", 10)
+            .attr("y", "-1em")
+            .attr("fill", "black")
+            .style("text-anchor", "middle")
+            .attr("font-size", "16px")
+            .attr("font-weight", "bold");
+
+
+        tooltip.append("rect")
+            .attr("x", 10)
+            .attr("y", "-1em")
+            .attr("width", 100)
+            .attr("width", 50)
+            .style("fill", "grey");
+
+
+
+
+
+
+
+    })
+</script>
+</body>
