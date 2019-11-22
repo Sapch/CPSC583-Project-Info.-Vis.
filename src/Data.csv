@@ -1,4 +1,4 @@
-﻿Country,Continent,Cost of Living Index,Dominant Religious Belief,Expected years of schooling - Years,Freedom,Gender Inequality Index 2014,Gini coefficient 2005-2013,Government,Gross domestic product GDP percapta,Happiness.Rank,Happiness.Score,Internet users percentage of population 2014,Number of Records,Prison population per 100k people,Region,Trust..Government.Corruption.,Development Status
+﻿Country,Continent,Cost of Living Index,Dominant Religious Belief,Expected years of schooling - Years,Freedom,Gender Inequality Index 2014,Gini,Government,GDP,Happiness.Rank,Happiness,Internet users percentage of population 2014,Number of Records,Prison population per 100k people,Region,Trust..Government.Corruption.,Development Status
 Albania,Europe,34.66,Muslim,11.82,0.38,0.22,28.96,Parliamentary Republic,10405.35,109,4.64,60.1,1,158,EASTERN EUROPE,0.04,Developing
 Algeria,Africa,33.92,Muslim,13.97,0.23,0.41,38.82,Presidential Republic,12892.94,53,5.87,18.09,1,162,NORTHERN AFRICA,0.15,Developing
 Angola,Africa,136.66,Catholic,11.39,0.00,0.41,42.66,Presidential Republic,7488.01,140,3.80,21.26,1,105,SUB-SAHARAN AFRICA,0.07,Underdeveloped

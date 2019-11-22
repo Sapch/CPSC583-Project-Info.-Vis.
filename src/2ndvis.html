@@ -7,7 +7,7 @@ https://bl.ocks.org/
 <head>
     <meta charset="utf-8">
     <script src="https://d3js.org/d3.v4.js"></script>
-    <link rel="stylesheet" type="text/css" href="2ndvis.css" />
+    <link rel="stylesheet" type="text/css" href="chart.css" />
 
     <!-- Load color -->
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
@@ -33,7 +33,7 @@ https://bl.ocks.org/
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //Read the data
-    d3.csv("Data.csv", function(data) {
+    d3.csv("data.csv", function(data) {
 
         // Add X axis
         var x = d3.scaleLinear()
@@ -175,4 +175,4 @@ https://bl.ocks.org/
 
     })
 </script>
-</body>
+</body>////////////////////////////////////////////////////////////////////////.
