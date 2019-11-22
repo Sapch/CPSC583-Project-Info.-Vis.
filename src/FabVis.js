@@ -1,29 +1,31 @@
-let width;
+let width, clickedCountries;
 let height = 1200;
 let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#00efff",
                 "#ee7497", "#54f04c"];
-let buttons = [{label: "Developed", width: 180, class: "dev"},
-                {label: "Developing", width: 180, class: "dev-ing"},
-                {label: "Underdeveloped", width: 180, class: "undev"},
-                {label: "Happiness Index", width: 180, class: "happy"},
-                {label: "Living Index", width: 180, class: "livindex"},
-                {label: "Reset", width: 180, class: "reset"}];
+let buttons = [{label: "Developed", class: "dev"},
+                {label: "Developing", class: "dev-ing"},
+                {label: "Underdeveloped", class: "undev"},
+                {label: "Happiness Index", class: "happy"},
+                {label: "Living Index", class: "livindex"},
+                {label: "Reset", class: "reset"}];
 var legend, hoverData, legendTitle;
 
-var prevColour, prevCountry;
+var prevColour;
 var firstime = true;
 
 window.onload = function() {
 
 width = document.body.clientWidth;
+clickedCountries = [];
+prevColours = [];
 
   let svg = d3.select("svg")
     .attr('width', width)
     .attr('height', height)
-    .style("background-color","#182aa5");
+    .style("background-color","#edfeff");
 
 
-  var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/11.5);
+  var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/11);
   var path = d3.geoPath().projection(projection);
   var g = svg.append('g');
 
@@ -77,7 +79,7 @@ width = document.body.clientWidth;
           return (i*50) + 800;
         })
         .attr('height', 40)
-        .attr('width', d => d.width)
+        .attr('width', 180)
         .attr('rx', 6)
         .attr('ry', 6)
         .style('cursor', 'pointer')
@@ -134,15 +136,11 @@ width = document.body.clientWidth;
 
 
     function mouseOver(d) {
-        d3.selectAll(".Country")
-          .transition()
-          .duration(200)
-          .style("opacity", 10)
         d3.select(this)
           .transition()
           .duration(200)
           .style("opacity", 1)
-          .style("stroke", "black")
+          .style('stroke-width', 2.5);
 
         addText(countryName(d), continentName(d));
 
@@ -160,23 +158,15 @@ width = document.body.clientWidth;
     }
 
 
-    function mouseLeave(d) {
-            d3.select(this).transition()
-                .duration(200)
-                .style("stroke", "transparent")
-                .style("opacity", 1)
-
-            d3.selectAll(".Country")
-                .transition()
-                .duration(200)
-                .style("opacity", 0.6)
-            d3.select(this)
-                .transition()
-                .duration(200)
-                .style("stroke", "transparent")
-                .style("opacity", 0.6)
-
-
+    function mouseLeave() {
+        svg.selectAll('.continent')
+            .transition()
+            .duration(200)
+            .style("opacity", (d) => {
+              if (clickedCountries.includes(d.id)) return 1.0;
+              return 0.6;
+            })
+            .style('stroke-width', 0.5);
       //Clear province name
       bigText.text('');
       bigText1.text('');
@@ -188,25 +178,24 @@ width = document.body.clientWidth;
 
 
     function clicked(d){
-        d3.select(this)
-            .style("fill", "#ffffff")
-            .style("opacity", 10)
-            .style("stroke", "black")
+        if (clickedCountries.includes(d.id)) {
+          d3.select(this)
+              .style("fill", () => {
+                return prevColours[clickedCountries.indexOf(d.id)];
+              })
+              .style("opacity", 0.6);
+          var i = clickedCountries.indexOf(d.id);
+          clickedCountries.splice(i, 1);
+          prevColours.splice(i, 1);
+        }
+        else {
+          prevColours.push(d3.select(this).style('fill'));
+          d3.select(this)
+              .style("fill", "#ff00bf")
+              .style("opacity", 1.0);
+          clickedCountries.push(d.id);
+        }
     }
-
-    //ZOOM STUFF, TO BE FIXED
-    //--------------------------------------------------------------------------------------------------------------------------
-      function zoomFunction() {
-          var transform = d3.zoomTransform(this);
-          d3.select("#continent")
-              svg.attr("transform", "translate(" + transform.x * 4 +  "," + transform.y * 4 + ") scale(" + transform.k*4 + ")");
-      }
-
-      var zoom = d3.zoom()
-          .on("zoom", zoomFunction);
-    //--------------------------------------------------------------------------------------------------------------------------
-
-
 
     // draw map
     svg.selectAll("path")
@@ -233,20 +222,14 @@ width = document.body.clientWidth;
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
         .on("click", clicked)
-        // ZOOM STUFF, TO BE FIXED
-        //--------------------------------------------------------------------------------------------------------------------------
-        // .call(d3.zoom().on("zoom", function () {
-        //     // svg.attr("transform", d3.event.transform)
-        // }))
-        .call(zoom)
-        //--------------------------------------------------------------------------------------------------------------------------
-  .     style("stroke", "transparent")
+        //.style("stroke", "transparent")
         .style("opacity", 0.6);
 
     d3.selectAll('path').style('fill', colours[5]);
 
     function filterMap(button, index) {
-      d3.selectAll('path').style('fill', colours[5]);
+      d3.selectAll('path').style('fill', colours[5]).style('opacity', 0.6);
+      clickedCountries = [];
       if (button.class === "dev") {
         svg.selectAll('.Developed').style('fill', colours[index]);
       }
@@ -291,7 +274,7 @@ width = document.body.clientWidth;
     // draw legend colored rectangles
     legend.append("rect")
         .attr("x", width - 18)
-        .attr("y", 40)
+        .attr("y", 400)
         .attr("width", 24)
         .attr("height", 24)
         .style("fill", colorHappy);
@@ -299,7 +282,7 @@ width = document.body.clientWidth;
     // draw legend text
     legend.append("text").attr("class", "text1")
         .attr("x", width - 24)
-        .attr("y", 52)
+        .attr("y", 408)
         .attr("dy", ".65em")
         .style("text-anchor", "end")
         .text(function(d) { return d;})
@@ -314,7 +297,7 @@ width = document.body.clientWidth;
     // draw legend colored rectangles
     legend1.append("rect")
         .attr("x", width - 18)
-        .attr("y", 40)
+        .attr("y", 50)
         .attr("width", 24)
         .attr("height", 24)
         .style("fill", colorLiving);
@@ -322,26 +305,25 @@ width = document.body.clientWidth;
     // draw legend text
     legend1.append("text").attr("class", "text1")
         .attr("x", width - 24)
-        .attr("y", 52)
+        .attr("y", 64)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text(function(d) { return d;})
 
-
       //legend title cost of living
     var legendTitle = g.append("text").attr("class", "text2")
-        .attr("x", width - 230)
+        .attr("x", width - 30)
         .attr("y", 16)
         .attr("dy", ".35em")
-        .style("text-anchor", "start")
+        .style("text-anchor", "end")
         .text("Cost of Living Index")
 
       //legend title happiness
     var legendTitle1 = g.append("text").attr("class", "text2")
-        .attr("x", width - 480)
-        .attr("y", 16)
+        .attr("x", width - 30)
+        .attr("y", 370)
         .attr("dy", ".35em")
-        .style("text-anchor", "start")
+        .style("text-anchor", "end")
         .text("Happiness Score")
 
     });
