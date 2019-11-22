@@ -1,7 +1,7 @@
 let width;
 let height = 1200;
-let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#ef3ccf",
-                "#a02006", "#54f04c"];
+let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#00efff",
+                "#ee7497", "#54f04c"];
 let buttons = [{label: "Developed", width: 180, class: "dev"},
                 {label: "Developing", width: 180, class: "dev-ing"},
                 {label: "Underdeveloped", width: 180, class: "undev"},
@@ -10,6 +10,8 @@ let buttons = [{label: "Developed", width: 180, class: "dev"},
                 {label: "Reset", width: 180, class: "reset"}];
 var legend, hoverData, legendTitle;
 
+var prevColour, prevCountry;
+var firstime = true;
 
 window.onload = function() {
 
@@ -21,10 +23,9 @@ width = document.body.clientWidth;
     .style("background-color","#182aa5");
 
 
-  var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/9);
+  var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/11.5);
   var path = d3.geoPath().projection(projection);
   var g = svg.append('g');
-  var centered;
 
   var bigText = g.append('text')
       .attr('x', 20)
@@ -48,12 +49,16 @@ width = document.body.clientWidth;
   var data = d3.map();
 
   const colorHappy = d3.scaleThreshold()
-      .domain([3, 4, 5, 6, 7, 8]) //15
-      .range(d3.schemeSet1);
+      .domain([3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
+      .range(['#001225', '#042739', '#073c4f', '#0a5366',
+            '#0c6b7e', '#0d8496', '#0d9daf', '#0bb8c9',
+            '#07d3e4', '#00efff']);
 
   const colorLiving = d3.scaleThreshold()
-      .domain([30, 40, 50, 60, 70, 80, 90, 100, 110]) //17
-      .range(d3.schemeSet3);
+      .domain([30, 40, 50, 60, 70, 80, 90, 100, 110, 120]) //10 Colours
+      .range(['#fd82ab', '#ee7497', '#df6783', '#d05970',
+                '#c14c5d', '#b13e4b', '#a23139', '#922328',
+                '#821417', '#730003']);
 
 
   // load data
@@ -62,7 +67,6 @@ width = document.body.clientWidth;
 
 
   Promise.all([worldmap, countries]).then(function (values) {
-
     svg.selectAll('.button')
       .data(buttons)
       .enter()
@@ -82,7 +86,7 @@ width = document.body.clientWidth;
         } )
         .on("mouseover", (d) => {
           svg.select('.button-'+d.class)
-            .style('opacity', 0.5)
+            .style('opacity', 1.0)
         })
         .on("mouseleave", (d) => {
           svg.select('.button-'+d.class)
@@ -106,7 +110,7 @@ width = document.body.clientWidth;
         .text(d => d.label)
         .on("mouseover", (d) => {
           svg.select('.button-'+d.class)
-            .style('opacity', 0.5)
+            .style('opacity', 1.0)
         })
         .on("mouseleave", (d) => {
           svg.select('.button-'+d.class)
@@ -145,12 +149,12 @@ width = document.body.clientWidth;
 
         if (d.properties.livingIndex !== "") {
           tooltip.transition()
-            .duration(200)
+            .duration(100)
             .style("opacity", .90);
 
           tooltip.html("Cost Living Index: " + d.properties.livingIndex + "\n" + "Happiness Score: " + d.properties.happinessRank)
             .style("left", (d3.event.pageX) + "px")
-            .style("font-size", "15px")
+            .style("font-size", "17px")
             .style("font-weight", "bold")
             .style("top", (d3.event.pageY - 28) + "px");
         }
@@ -158,24 +162,40 @@ width = document.body.clientWidth;
 
 
     function mouseLeave(d) {
-      d3.selectAll(".Country")
-        .transition()
-        .duration(200)
-        .style("opacity", 0.7)
-      d3.select(this)
-        .transition()
-        .duration(200)
-        .style("stroke", "transparent")
-        .style("opacity", 0.7)
+            d3.select(this).transition()
+                .duration(200)
+                .style("stroke", "transparent")
+                .style("opacity", 1)
+
+            d3.selectAll(".Country")
+                .transition()
+                .duration(200)
+                .style("opacity", 0.6)
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .style("stroke", "transparent")
+                .style("opacity", 0.6)
+
 
       //Clear province name
       bigText.text('');
       bigText1.text('');
      //remove tooltip
       tooltip.transition()
-        .duration(1000)
+        .duration(200)
         .style("opacity", 0);
     }
+
+
+    function clicked(d){
+        d3.select(this)
+            .style("fill", "#ffffff")
+            .style("opacity", 10)
+            .style("stroke", "black")
+    }
+
+
 
     // draw map
     svg.selectAll("path")
@@ -201,8 +221,9 @@ width = document.body.clientWidth;
         })
         .on("mouseover", mouseOver)
         .on("mouseleave", mouseLeave)
+        .on("click", clicked)
         .style("stroke", "transparent")
-        .style("opacity", 0.7);
+        .style("opacity", 0.6);
 
 
     d3.selectAll('path').style('fill', colours[5]);
@@ -244,12 +265,12 @@ width = document.body.clientWidth;
     }
 
 
-    // draw legend
+    // draw legend Happiness
     var legend = svg.selectAll(".legend")
         .data(colorHappy.domain())
         .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(-200," + i * 26 + ")"; });
+        .attr("transform", function(d, i) { return "translate(-380," + i * 26 + ")"; });
 
     // draw legend colored rectangles
     legend.append("rect")
@@ -263,16 +284,16 @@ width = document.body.clientWidth;
     legend.append("text").attr("class", "text1")
         .attr("x", width - 24)
         .attr("y", 52)
-        .attr("dy", ".35em")
+        .attr("dy", ".65em")
         .style("text-anchor", "end")
         .text(function(d) { return d;})
 
-    // draw legend
+    // draw legend Cost living index
     var legend1 = svg.selectAll(".legend1")
         .data(colorLiving.domain())
         .enter().append("g")
         .attr("class", "legend1")
-        .attr("transform", function(d, i) { return "translate(-100," + i * 26 + ")"; });
+        .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
 
     // draw legend colored rectangles
     legend1.append("rect")
@@ -290,15 +311,18 @@ width = document.body.clientWidth;
         .style("text-anchor", "end")
         .text(function(d) { return d;})
 
+
+      //legend title cost of living
     var legendTitle = g.append("text").attr("class", "text2")
-        .attr("x", width - 140)
+        .attr("x", width - 230)
         .attr("y", 16)
         .attr("dy", ".35em")
         .style("text-anchor", "start")
-        .text("Living Index")
+        .text("Cost of Living Index")
 
+      //legend title happiness
     var legendTitle1 = g.append("text").attr("class", "text2")
-        .attr("x", width - 340)
+        .attr("x", width - 480)
         .attr("y", 16)
         .attr("dy", ".35em")
         .style("text-anchor", "start")
