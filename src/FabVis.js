@@ -29,11 +29,6 @@ prevColours = [];
   var path = d3.geoPath().projection(projection);
   var g = svg.append('g');
 
-  var searchbtn = document.getElementById("searchBtn");
-    console.log(searchbtn);
-    searchbtn.onclick = search;
-
-
   var bigText = g.append('text')
       .attr('x', 20)
       .attr('y', 50);
@@ -72,68 +67,11 @@ prevColours = [];
   var worldmap = d3.json("countries.geojson");
   var countries = d3.csv("Data.csv");
 
-    function search() {
-        if(firstime){
-            var countryN = document.getElementById("countryN");
-            let capitalizedC = capitalizeFLetter(countryN);
-            //  console.log(capitalizedC);
-            let elemId = ".continent-" + capitalizedC;
-            console.log(elemId);
-            prevCountry = elemId;
-            let countryLabel = d3.select(elemId);
-            // var x = document.getElementsByClassName(elemId);
-            // let help = getComputedStyle(x);
-            //prevColour = help.style.fill;
-            prevColour = countryLabel.style('fill');
-            console.log(prevColour)
-            countryLabel.style('fill', '#fffdf8');
-            countryLabel.style("opacity", 1)
-            countryLabel.style('stroke', '#000000');
-            countryLabel.style('stroke-width', 2);
-            firstime = false;
-        }
-
-        else{
-            let countryLabel = d3.select(prevCountry);
-            countryLabel.style('fill', prevColour);
-            countryLabel.style("opacity", 0.5);
-            countryLabel.style("stroke", "transparent");
-
-            var countryN = document.getElementById("countryN");
-            let capitalizedC = capitalizeFLetter(countryN);
-            let elemId = ".continent-" + capitalizedC;
-            prevCountry = elemId;
-            countryLabel = d3.select(elemId);
-            // var x = document.getElementsByClassName(elemId);
-            // let help = getComputedStyle(countryLabel);
-            //prevColour = help.style.fill;
-            prevColour = countryLabel.style('fill');
-            console.log(prevColour);
-            countryLabel.style('fill', '#fffdf8');
-            countryLabel.style("opacity", 1)
-            countryLabel.style('stroke', '#000000');
-            countryLabel.style('stroke-width', 2);
-        }
-    }
-
-    function capitalizeFLetter(countryN) {
-        let string = countryN.value;
-        if(string === "usa" || string === "USA" || string === "united states" || string === "united states of america" || string === "US" || string === "us")
-        {
-            console.log("here?");
-            let string2 = "United States of America ";
-            return string2;
-        }
-        else {
-            //    console.log(countryN.value + " in func")
-            let string2 = string[0].toUpperCase() + string.slice(1);
-            // console.log(string2);
-            return string2;
-        }
-    }
-
-
   Promise.all([worldmap, countries]).then(function (values) {
+
+    var searchbtn = document.getElementById("searchBtn");
+    searchbtn.onclick = search;
+
     svg.selectAll('.button')
       .data(buttons)
       .enter()
@@ -224,7 +162,7 @@ prevColours = [];
 
 
     function mouseLeave() {
-        svg.selectAll('.continent')
+        svg.selectAll('path')
             .transition()
             .duration(200)
             .style("opacity", (d) => {
@@ -260,6 +198,26 @@ prevColours = [];
               .style("opacity", 1.0);
           clickedCountries.push(d.id);
         }
+    }
+
+    function search() {
+      let countryName = document.getElementById("countryN").value.toLowerCase();
+      let d = svg.selectAll('path')
+        .filter((d) => {
+          return d.properties.name.toLowerCase() === countryName;
+        }).data();
+      let dPath = svg.selectAll('path')
+        .filter((d) => {
+          return d.properties.name.toLowerCase() === countryName;
+        });
+      if (d.length > 0) {
+        d = d[0];
+        if (!clickedCountries.includes(d.id)) {
+          clickedCountries.push(d.id);
+          prevColours.push(dPath.style('fill'));
+          dPath.style('fill', "#ff00bf").style('opacity', 1);
+        }
+      }
     }
 
     // draw map
@@ -334,7 +292,7 @@ prevColours = [];
         .data(colorHappy.domain())
         .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(-380," + i * 26 + ")"; });
+        .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
 
     // draw legend colored rectangles
     legend.append("rect")
