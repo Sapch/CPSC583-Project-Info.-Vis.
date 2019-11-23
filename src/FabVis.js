@@ -1,6 +1,6 @@
 let width, clickedCountries;
 let height = 1200;
-let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#00efff",
+let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#e8e9ec",
                 "#ee7497", "#54f04c"];
 let buttons = [{label: "Developed", class: "dev"},
                 {label: "Developing", class: "dev-ing"},
@@ -22,7 +22,7 @@ prevColours = [];
   let svg = d3.select("svg")
     .attr('width', width)
     .attr('height', height)
-    .style("background-color","#edfeff");
+    .style("background-color","#b7c4ff");
 
 
   var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/11);
@@ -52,9 +52,10 @@ prevColours = [];
 
     const colorHappy = d3.scaleThreshold()
       .domain([3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
-      .range(['#001225', '#042739', '#073c4f', '#0a5366',
-            '#0c6b7e', '#0d8496', '#0d9daf', '#0bb8c9',
-            '#07d3e4', '#00efff']);
+      .range(['#3c4a61', '#505c71', '#646f82', '#798293',
+            '#8e96a4', '#a4aab6', '#babfc8', '#d1d4da',
+            '#e8e9ec', '#ffffff']
+      );
 
   const colorLiving = d3.scaleThreshold()
       .domain([30, 40, 50, 60, 70, 80, 90, 100, 110, 120]) //10 Colours
