@@ -1,4 +1,4 @@
-let width, clickedCountries;
+let width, clickedCountries, nullC;
 let height = 1200;
 let colours =  ["#ff00bf","#efed37", "#ff8e0f", "#f2080d",
                 "#d3294c", "#589428", "#6e6e71"];
@@ -9,11 +9,6 @@ let buttons = [{label: "Compare", class: "compare"},
                 {label: "Happiness Index", class: "happy"},
                 {label: "Living Index", class: "livindex"},
                 {label: "Reset", class: "reset"}];
-
-let nullC =["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI","CMR","CAF","TCD","CUB","COD","DJI","TLS","GNQ",
-            "ERI","FLK","FJI","GUF","ATF","GAB","GMB","GRL","GIN","GNB","GUY","HTI","HND","CIV","KGZ","LAO","LSO","LBR","LBY","MDG",
-            "MWI","MLI","MRT","MDA","MNE","MAR","MMR","NCL","NIC","NER","PRK","OMN",'PNG',"PRI","SRB","COG","SEN","SLE","SLB","SOM",
-            "KOR","SSD","SDN","SUR","SWZ","SYR","TWN","TJK","BHS","TGO","TTO","TKM","TZA","VUT","VNM","PSE","ESH","YEM"];
 
 var legend, hoverData, legendTitle;
 var nullColour = '#fffdf8';
@@ -26,6 +21,7 @@ window.onload = function() {
 width = document.body.clientWidth;
 clickedCountries = [];
 prevColours = [];
+nullC = [];
 
   let svg = d3.select("svg")
     .attr('width', width)
@@ -211,7 +207,7 @@ prevColours = [];
           prevColours.splice(i, 1);
         }
         else {
-            if(countryCheck(d.id))
+            if(nullC.includes(d.id))
                 alert("No data for this country");
             else {
                 prevColours.push(d3.select(this).style('fill'));
@@ -221,18 +217,6 @@ prevColours = [];
                 clickedCountries.push(d.id);
             }
         }
-    }
-
-
-    function countryCheck(d){
-        let i=0;
-        while(i < 180){
-           if (nullC[i] === d) {
-                   return true;
-           }
-           i++;
-        }
-        return false;
     }
 
     function search() {
@@ -264,6 +248,7 @@ prevColours = [];
         .attr("class", d => "continent-" + d.properties.name)
         .attr("d", path)
         .attr("fill", function (d) {
+          nullC.push(d.id);
           if (developmentStatus(d) == "Developed") {
             //d3.select(this).style('fill', colours[0]);
             d3.select(this).classed("Developed", true)
