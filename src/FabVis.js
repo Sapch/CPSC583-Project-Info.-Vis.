@@ -198,13 +198,14 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
     }
 
 
-    function clicked(d){
+    function clicked(d, i){
         if (clickedCountries.includes(d.id)) {
           d3.select(this)
               .style("fill", () => {
                 return prevColours[clickedCountries.indexOf(d.id)];
               })
-              .style("opacity", 0.6);
+              .style("opacity", 0.6)
+              .style('stroke-width', 0.5);
           var i = clickedCountries.indexOf(d.id);
           clickedCountries.splice(i, 1);
           prevColours.splice(i, 1);
@@ -222,7 +223,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         }
     }
 
-    function search() {
+    function search(e) {
       e.preventDefault();
       let countryName = document.getElementById("countryN").value.toLowerCase();
       let d = svg.selectAll('path')
