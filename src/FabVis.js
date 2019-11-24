@@ -1,4 +1,4 @@
-let width, clickedCountries, nullC;
+let width, clickedCountries;
 let height = 1200;
 let colours =  ["#ff00bf","#efed37", "#ff8e0f", "#f2080d",
                 "#d3294c", "#589428", "#6e6e71"];
@@ -21,7 +21,10 @@ window.onload = function() {
 width = document.body.clientWidth;
 clickedCountries = [];
 prevColours = [];
-nullC = [];
+var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI","CMR","CAF","TCD","CUB","COD","DJI","TLS","GNQ",
+            "ERI","FLK","FJI","GUF","ATF","GAB","GMB","GRL","GIN","GNB","GUY","HTI","HND","CIV","KGZ","LAO","LSO","LBR","LBY","MDG",
+            "MWI","MLI","MRT","MDA","MNE","MAR","MMR","NCL","NIC","NER","PRK","OMN",'PNG',"PRI","SRB","COG","SEN","SLE","SLB","SOM",
+            "KOR","SSD","SDN","SUR","SWZ","SYR","TWN","TJK","BHS","TGO","TTO","TKM","TZA","VUT","VNM","PSE","ESH","YEM"];
 
   let svg = d3.select("svg")
     .attr('width', width)
@@ -248,7 +251,6 @@ nullC = [];
         .attr("class", d => "continent-" + d.properties.name)
         .attr("d", path)
         .attr("fill", function (d) {
-          nullC.push(d.id);
           if (developmentStatus(d) == "Developed") {
             //d3.select(this).style('fill', colours[0]);
             d3.select(this).classed("Developed", true)
