@@ -276,8 +276,10 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
     d3.selectAll('path').style('fill', colours[6]);
 
     function filterMap(button, index) {
-      d3.selectAll('path').style('fill', colours[6]).style('opacity', 0.6);
-      clickedCountries = [];
+      if (button.class !== "compare") {
+        d3.selectAll('path').style('fill', colours[6]).style('opacity', 0.6).style("stroke-width", 0.5);
+        clickedCountries = [];
+      }
       if (button.class === "dev") {
         svg.selectAll('.Developed').style('fill', colours[index]);
       }
@@ -305,7 +307,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
       }
 
       else if(button.class === "compare"){
-          //compareCountries(clickedCountries); <-------------------------------------------------------------------------- Function from Sam's code
+        showScatterplot(clickedCountries);
       }
     }
 
@@ -384,6 +386,17 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text("Happiness Score");
+
+    svg.append('g')
+      .attr('class', 'scatter')
+      .style('visibility', 'hidden')
+      .append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', width)
+        .attr('height', height)
+        .style('fill', 'black')
+        .style('opacity', 0.8);
 
     });
 }
