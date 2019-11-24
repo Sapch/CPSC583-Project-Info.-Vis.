@@ -76,8 +76,7 @@ prevColours = [];
 
   Promise.all([worldmap, countries]).then(function (values) {
 
-      var searchbtn = document.getElementById("searchBtn");
-    searchbtn.onclick = search;
+    document.getElementById("searchForm").onsubmit = search;
 
     svg.selectAll('.button')
       .data(buttons)
@@ -158,7 +157,7 @@ prevColours = [];
         if (d.properties.livingIndex !== "") {
           tooltip.transition()
             .duration(100)
-            .style("opacity", .90);
+            .style("opacity", 0.9);
 
           tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex + "<br />" + "Happiness Score: " + d.properties.happinessRank)
             .style("left", (d3.event.pageX) + "px")
@@ -237,6 +236,7 @@ prevColours = [];
     }
 
     function search() {
+      e.preventDefault();
       let countryName = document.getElementById("countryN").value.toLowerCase();
       let d = svg.selectAll('path')
         .filter((d) => {
@@ -387,7 +387,7 @@ prevColours = [];
         .attr("y", 16)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text("Cost of Living Index")
+        .text("Cost of Living Index");
 
       //legend title happiness
     var legendTitle1 = g.append("text").attr("class", "text2")
@@ -395,7 +395,7 @@ prevColours = [];
         .attr("y", 390)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text("Happiness Score")
+        .text("Happiness Score");
 
     });
 }

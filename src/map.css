@@ -53,3 +53,18 @@ div.tooltip {
 body {
 		text-align: center;
 }
+
+input {
+  margin: 10px;
+	width: 350px;
+	height: 55px;
+}
+
+button {
+  margin: 10px;
+	width: 130px;
+	height: 55px;
+	border-radius: 8px;
+	background-color: #3586af;
+	color: white;
+}
