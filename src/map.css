@@ -1,5 +1,5 @@
 .continent {
-	fill: #54f04c;
+	fill: #ababae;
 	stroke: #000000;
 	stroke-width: 2;
 }
@@ -8,6 +8,8 @@
 	font-family: sans-serif;
 	font-size: 20px;
 	fill: #3c373d;
+	text-align: center;
+	margin: auto;
 }
 
 div.tooltip {
@@ -18,7 +20,7 @@ div.tooltip {
 	padding: 10px;
 	font: 17px sans-serif;
 	background: #ffffff;
-	border: 0px;
+	border: 0;
 	pointer-events: none;
 	border-radius: 6px;
 }
