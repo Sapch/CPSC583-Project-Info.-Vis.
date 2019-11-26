@@ -51,37 +51,54 @@ function showScatterplot(clickedCountries) {
         .domain([0, 140000])
         .rangeRound([5, 60]);
 
+
+      var xAxis = d3.axisBottom(x)
+      var yAxis = d3.axisLeft(y)
+
+      // var gX = scatterplot.append('g')
+      //     // .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
+      //     .call(xAxis.ticks(8).tickSize(-800).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
+      //     // .attr("font-size", 20)
+      //     // .attr("font-weight", "bold")
+      //
+      // var gY = scatterplot.append('g')
+      //     // .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      //     .call(yAxis.ticks(12).tickSize(-1400).tickFormat(d3.format(".2f")) .tickSizeOuter(0).scale(y))
+      //     // .attr("font-size", 20)
+      //     // .attr("font-weight", "bold")
+
+
     // Add a scale for bubble color
     const myColor = d3.scaleOrdinal(d3.schemeSet1);
 
     //add x axis to scatterplot
-    scatterplot.append("g")
+   var gX = scatterplot.append("g")
         .attr("transform", "translate(0," + (height-margin.bottom-100) + ")")
-        .call(d3.axisBottom().scale(x))
-        .attr("font-size", 18)
-        .append("text")
-          .attr("y", 80)
-          .attr("x", width/2)
-          .attr("fill", "#000")
-          .attr("font-size", 30)
+        .call(xAxis.ticks(7).tickSize(-800).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
+        // .attr("font-size", 18)
+        // .append("text")
+        //   .attr("y", 80)
+        //   .attr("x", width/2)
+        //   .attr("fill", "#000")
+          .attr("font-size", 15)
           .attr("font-weight", "bold")
-          .attr("text-anchor", "middle")
-          .text("Gini Coefficient (economic inequality)");
+          // .attr("text-anchor", "middle")
+         // .text("Gini Coefficient (economic inequality)");
 
     //add y axis to scatterplot
-    scatterplot.append("g")
+  var gY =  scatterplot.append("g")
     .attr("transform", 'translate('+margin.left+',0)')
-    .call(d3.axisLeft().scale(y))
-    .attr("font-size", 18)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -60)
-      .attr('x', -height/2)
-      .attr("fill", "#000")
+    .call(yAxis.ticks(12).tickSize(-1400).tickFormat(d3.format(".2f")) .tickSizeOuter(0).scale(y))
+    // .attr("font-size", 18)
+    // .append("text")
+    //   .attr("transform", "rotate(-90)")
+    //   .attr("y", -60)
+    //   .attr('x', -height/2)
+    //   .attr("fill", "#000")
       .attr("font-weight", "bold")
-      .attr("font-size", 30)
-      .attr("text-anchor", "middle")
-      .text("Happiness Score");
+      .attr("font-size", 15)
+      // .attr("text-anchor", "middle")
+     // .text("Happiness Score");
 
     //legend rectangles
     var size = 30
@@ -91,13 +108,11 @@ function showScatterplot(clickedCountries) {
         .append("rect")
           .attr("x", width/2 + 600)
           .attr("y", function(d,i){
-            console.log(i);
             return 150 + i*(size+5);
           })
           .attr("width", size)
           .attr("height", size)
           .style("fill", function(d, i){
-            //console.log(i);
             return myColor(d);
           });
 
@@ -116,14 +131,15 @@ function showScatterplot(clickedCountries) {
           .attr("text-anchor", "start")
           .attr("font-weight", "bold");
 
-    // Add dots
-    scatterplot.selectAll(".dot")
+
+      // Add dots
+  var circles = scatterplot.selectAll(".dot")
         .data(data)
         .enter()
         .append("circle")
           .attr("cx", function (d) { return x(d.Gini); } )
           .attr("cy", function (d) { return y(d.Happiness); } )
-          .attr("r", function (d) { return z(d.GDP); } )
+          .attr("r", function (d) { return z(d.GDP * 2.5); } )
           .style("fill", function (d) { return myColor(d.Continent); } )
           .style("opacity", "0.7")
           .attr("stroke", "black")
@@ -143,6 +159,7 @@ function showScatterplot(clickedCountries) {
           })
           .on("mouseout", function() { scatterplot.select('.tooltipText').style("display", "none"); });
 
+
     //add tooltip
     scatterplot.append("text")
         .attr('class', 'tooltipText')
@@ -153,7 +170,28 @@ function showScatterplot(clickedCountries) {
         .attr("font-weight", "bold")
         .style("display", "none");
 
-    darkLayer.style('visibility', 'visible');
+      // Pan and zoom
+      var zoom = d3.zoom()
+          .scaleExtent([.5, 20])
+          .extent([[0, 0], [width, height]])
+          .on("zoom", zoomed);
+
+
+      function zoomed() {
+          var new_xScale = d3.event.transform.rescaleX(x);
+          var new_yScale = d3.event.transform.rescaleY(y);
+
+          gX.call(xAxis.scale(new_xScale));
+          gY.call(yAxis.scale(new_yScale));
+          circles.attr("transform", d3.event.transform)
+              .attr('cx', function(d) {return new_xScale(d.Gini)})
+              .attr('cy', function(d) {return new_yScale(d.Happiness)});
+      }
+
+      zoom(scatterplot);
+
+
+      darkLayer.style('visibility', 'visible');
 
   });
 }

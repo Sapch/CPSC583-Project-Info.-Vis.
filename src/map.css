@@ -68,3 +68,10 @@ button {
 	background-color: #3586af;
 	color: white;
 }
+
+.tick line {
+}
+
+.tick line {
+	stroke: #cecece;
+}

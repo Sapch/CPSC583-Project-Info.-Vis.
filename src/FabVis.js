@@ -158,7 +158,8 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
             .duration(100)
             .style("opacity", 0.9);
 
-          tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex + "<br />" + "Happiness Score: " + d.properties.happinessRank)
+          tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex +
+              "<br />" + "Happiness Score: " + d.properties.happinessRank)
             .style("left", (d3.event.pageX) + "px")
             .style("font-size", "17px")
             .style("font-weight", "bold")
@@ -291,7 +292,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
       }
       else if (button.class === "happy") {
         d3.selectAll("path").style('fill', (d) => {
-           if(d.properties.happinessRank == 0)
+           if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
                return nullColour;
             else
                return colorHappy(d.properties.happinessRank);
