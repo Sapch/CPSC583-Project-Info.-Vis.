@@ -56,22 +56,22 @@ function showScatterplot(clickedCountries) {
         .domain([0, 10])
         .rangeRound([0, 30]);
 
-    var xAxis = d3.axisBottom(x)
-    var yAxis = d3.axisLeft(y)
+    var xAxis = d3.axisBottom(x);
+    var yAxis = d3.axisLeft(y);
 
     // Add a scale for bubble color
     const myColor = d3.scaleOrdinal(d3.schemeSet1);
 
     //add x axis to scatterplot
    var gX = scatterplot.append("g")
-        .attr("transform", "translate(0," + (height-margin.bottom) +  ")")
+        .attr("transform", "translate(0," + (height-margin.bottom-70) +  ")")
         .call(xAxis.ticks(7).tickSize(-900).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
         .attr("font-size", 18);
 
     //add y axis to scatterplot
   var gY =  scatterplot.append("g")
     .attr("transform", 'translate('+margin.left+',0)')
-    .call(yAxis.ticks(14).tickSize(-1200).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
+    .call(yAxis.ticks(yTicks).tickSize(-1200).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
     .attr("font-size", 18);
 
   scatterplot.append("text")
@@ -156,7 +156,7 @@ function showScatterplot(clickedCountries) {
                   return 600;
               }
               else{
-                  return 500 + 30*d
+                  return 510 + 30*d
               }})
           .text(function(d,i){
               return d;})
@@ -172,7 +172,7 @@ function showScatterplot(clickedCountries) {
           .data(circleSize)
           .enter()
           .append("text")
-          .attr("x",  width/2 + 530)
+          .attr("x",  width/2 + 630)
           .attr("y", 530)
           .text("Happiness Score (0-10)")
           .style("fill", "#000")
