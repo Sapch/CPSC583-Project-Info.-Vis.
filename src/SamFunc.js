@@ -51,7 +51,7 @@ function showScatterplot(clickedCountries) {
     // Add a scale for bubble size
     var z = d3.scaleLinear()
         .domain([0, 10])
-        .rangeRound([0, 30]);
+        .rangeRound([0, 10]);
 
 
       var xAxis = d3.axisBottom(x)
@@ -77,30 +77,30 @@ function showScatterplot(clickedCountries) {
    var gX = scatterplot.append("g")
         .attr("transform", "translate(0," + (height-margin.bottom) +  ")")
         .call(xAxis.ticks(7).tickSize(-900).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
-        // .attr("font-size", 18)
-        // .append("text")
-        //   .attr("y", 80)
-        //   .attr("x", width/2)
-        //   .attr("fill", "#000")
-          .attr("font-size", 15)
-          .attr("font-weight", "bold")
-          // .attr("text-anchor", "middle")
-         // .text("Gini Coefficient (economic inequality)");
+        .attr("font-size", 18)
+        .append("text")
+        .attr("y", 80)
+        .attr("x", width/2)
+        .attr("fill", "#000")
+        .attr("font-size", 20)
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .text("Gini (Economic Inequality)");
 
     //add y axis to scatterplot
   var gY =  scatterplot.append("g")
     .attr("transform", 'translate('+margin.left+',0)')
     .call(yAxis.ticks(14).tickSize(-1200).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
-    // .attr("font-size", 18)
-    // .append("text")
-    //   .attr("transform", "rotate(-90)")
-    //   .attr("y", -60)
-    //   .attr('x', -height/2)
-    //   .attr("fill", "#000")
-      .attr("font-weight", "bold")
-      .attr("font-size", 15)
-      // .attr("text-anchor", "middle")
-     // .text("Happiness Score");
+    .attr("font-size", 18)
+    .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", -60)
+    .attr('x', -height/2)
+    .attr("fill", "#000")
+    .attr("font-weight", "bold")
+    .attr("font-size", 20)
+    .attr("text-anchor", "middle")
+    .text("GDP per capita ($1K)");
 
     //legend rectangles
     var size = 30
@@ -147,7 +147,7 @@ function showScatterplot(clickedCountries) {
                   return 500 + 30*d
               }})
           .attr("r", function(d,i){
-              return d*6
+              return d**1.7
           })
           .style("fill", 'white')
           .style("opacity", "0.7")
@@ -198,7 +198,7 @@ function showScatterplot(clickedCountries) {
         .append("circle")
           .attr("cx", function (d) { return x(d.Gini); } )
           .attr("cy", function (d) { return y(d.GDP/1000); } )
-          .attr("r", function (d) { return z(d.Happiness * 2); } )
+          .attr("r", function (d) { return z(d.Happiness ** 1.7); } )
           .style("fill", function (d) { return myColor(d.Continent); } )
           .style("opacity", "0.7")
           .attr("stroke", "black")
@@ -227,6 +227,7 @@ function showScatterplot(clickedCountries) {
         .style("text-anchor", "middle")
         .attr("font-size", "24px")
         .attr("font-weight", "bold")
+        .style("fill", "white")
         .style("display", "none");
 
       // Pan and zoom
