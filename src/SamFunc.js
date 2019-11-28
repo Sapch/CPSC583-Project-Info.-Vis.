@@ -181,9 +181,9 @@ function showScatterplot(clickedCountries) {
           .data(circleSize)
           .enter()
           .append("text")
-          .attr("x",  width/2 + 550)
+          .attr("x",  width/2 + 530)
           .attr("y", 530)
-          .text("Happiness Index")
+          .text("Happiness Score (0-10)")
           .style("fill", "#000")
           .attr("font-size", 24)
           .attr("text-anchor", "start")
@@ -205,12 +205,12 @@ function showScatterplot(clickedCountries) {
           .style("stroke-width", "2px")
           .on("mouseover", function(d) {
             var xPosition = d3.mouse(this)[0];
-            var yPosition = d3.mouse(this)[1]-20;
+            var yPosition = d3.mouse(this)[1]-40;
 
             scatterplot.select('.tooltipText')
               .attr("x", xPosition)
               .attr("y", yPosition)
-              .text(d.Country + " - GDP  $"+ d.GDP/1000+"K")
+              .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)
               .style("display", "inline");
           })
           .on("mousemove", function(d) {
@@ -230,7 +230,7 @@ function showScatterplot(clickedCountries) {
         .style("display", "none");
 
       // Pan and zoom
-      var zoom = d3.zoom()
+/*      var zoom = d3.zoom()
           .scaleExtent([.5, 20])
           .extent([[0, 0], [width, height]])
           .on("zoom", zoomed);
@@ -247,7 +247,7 @@ function showScatterplot(clickedCountries) {
               .attr('cy', function(d) {return new_yScale(d.Happiness)});
       }
 
-      zoom(scatterplot);
+      zoom(scatterplot);*/
 
 
       darkLayer.style('visibility', 'visible');
