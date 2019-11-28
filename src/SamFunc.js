@@ -59,32 +59,19 @@ function showScatterplot(clickedCountries) {
     var xAxis = d3.axisBottom(x);
     var yAxis = d3.axisLeft(y);
 
-      // var gX = scatterplot.append('g')
-      //     // .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
-      //     .call(xAxis.ticks(8).tickSize(-800).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
-      //     // .attr("font-size", 20)
-      //     // .attr("font-weight", "bold")
-      //
-      // var gY = scatterplot.append('g')
-      //     // .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-      //     .call(yAxis.ticks(12).tickSize(-1400).tickFormat(d3.format(".2f")) .tickSizeOuter(0).scale(y))
-      //     // .attr("font-size", 20)
-      //     // .attr("font-weight", "bold")
-
-
     // Add a scale for bubble color
     const myColor = d3.scaleOrdinal(d3.schemeSet1);
 
     //add x axis to scatterplot
    var gX = scatterplot.append("g")
         .attr("transform", "translate(0," + (height-margin.bottom-70) +  ")")
-        .call(xAxis.ticks(7).tickSize(-900).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
+        .call(xAxis.ticks(7).tickSize(-960).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
         .attr("font-size", 18);
 
     //add y axis to scatterplot
   var gY =  scatterplot.append("g")
     .attr("transform", 'translate('+margin.left+',0)')
-    .call(yAxis.ticks(yTicks).tickSize(-1200).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
+    .call(yAxis.ticks(yTicks).tickSize(-1400).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
     .attr("font-size", 18);
 
   scatterplot.append("text")
