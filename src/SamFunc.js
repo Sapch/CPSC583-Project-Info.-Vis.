@@ -2,20 +2,22 @@
 function showScatterplot(clickedCountries) {
 
   let width = document.body.clientWidth, height = 1200,
-    margin = {top: 100, right: (width-1400)/2, bottom: 100, left: (width-1400)/2},
+    margin = {top: 100, right: 200 + (width-1400)/2, bottom: 100, left: (width-1400)/2},
+      circleSize = [2, 6, 10],
     keys = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"],
     darkLayer = d3.select('.scatter');
 
   let scatterplot = darkLayer.append('g').attr('class', 'secondVis');
 
+
   scatterplot.append('rect')
       .attr('x', width/2 - 800)
       .attr('y', 100)
       .attr('width', 1600)
-      .attr('height', 1000)
+      .attr('height', 1200)
       .attr('rx', 12)
       .attr('ry', 12)
-      .style('fill', 'white');
+      .style('fill', 'grey');
 
   scatterplot.append('text')
       .attr('x', width/2 + 760)
@@ -38,18 +40,18 @@ function showScatterplot(clickedCountries) {
 
     // Add X axis
     var x = d3.scaleLinear()
-        .domain([20, 65])
-        .rangeRound([ margin.left, width-margin.right ]);
+        .domain([20, 70])
+        .rangeRound([ margin.left, width-margin.right]);
 
     // Add Y axis
     var y = d3.scaleLinear()
-        .domain([3, 8.5])
-        .rangeRound([ height-margin.bottom-100, margin.top+100]);
+        .domain([0, 140])
+        .rangeRound([ height-margin.bottom, margin.top+100]);
 
     // Add a scale for bubble size
     var z = d3.scaleLinear()
-        .domain([0, 140000])
-        .rangeRound([5, 60]);
+        .domain([0, 10])
+        .rangeRound([0, 30]);
 
 
       var xAxis = d3.axisBottom(x)
@@ -73,8 +75,8 @@ function showScatterplot(clickedCountries) {
 
     //add x axis to scatterplot
    var gX = scatterplot.append("g")
-        .attr("transform", "translate(0," + (height-margin.bottom-100) + ")")
-        .call(xAxis.ticks(7).tickSize(-800).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
+        .attr("transform", "translate(0," + (height-margin.bottom) +  ")")
+        .call(xAxis.ticks(7).tickSize(-900).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
         // .attr("font-size", 18)
         // .append("text")
         //   .attr("y", 80)
@@ -88,7 +90,7 @@ function showScatterplot(clickedCountries) {
     //add y axis to scatterplot
   var gY =  scatterplot.append("g")
     .attr("transform", 'translate('+margin.left+',0)')
-    .call(yAxis.ticks(12).tickSize(-1400).tickFormat(d3.format(".2f")) .tickSizeOuter(0).scale(y))
+    .call(yAxis.ticks(14).tickSize(-1200).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
     // .attr("font-size", 18)
     // .append("text")
     //   .attr("transform", "rotate(-90)")
@@ -106,9 +108,9 @@ function showScatterplot(clickedCountries) {
         .data(keys)
         .enter()
         .append("rect")
-          .attr("x", width/2 + 600)
+          .attr("x", width/2 + 570)
           .attr("y", function(d,i){
-            return 150 + i*(size+5);
+            return 200 + i*(size+5);
           })
           .attr("width", size)
           .attr("height", size)
@@ -121,15 +123,72 @@ function showScatterplot(clickedCountries) {
         .data(keys)
         .enter()
         .append("text")
-          .attr("x", width/2 + 640)
+          .attr("x", width/2 + 620)
           .attr("y", function(d,i){
-            return 170 + i*(size+5);})
+            return 220 + i*(size+5);})
           .text(function(d){
             return d;})
           .style("fill", "#000")
           .attr("font-size", 22)
           .attr("text-anchor", "start")
           .attr("font-weight", "bold");
+
+        //Happiness legend circle
+      scatterplot.selectAll('legend')
+          .data(circleSize)
+          .enter()
+          .append("circle")
+          .attr("cx",  width/2 + 600)
+          .attr("cy", function(d,i){
+              if (d==2) {
+                  return 500 + 90;
+              }
+              else{
+                  return 500 + 30*d
+              }})
+          .attr("r", function(d,i){
+              return d*6
+          })
+          .style("fill", 'white')
+          .style("opacity", "0.7")
+          .attr("stroke", "black")
+          .style("stroke-width", "2px");
+
+      //Happiness legend value
+      scatterplot.selectAll('label')
+          .data(circleSize)
+          .enter()
+          .append("text")
+          .attr("x",  width/2 + 670)
+          .attr("y", function(d,i){
+              if (d==2) {
+                  return 500 + 90;
+              }
+              else{
+                  return 500 + 30*d
+              }})
+          .text(function(d,i){
+              return d;})
+          .style("fill", "#000")
+          .attr("font-size", 32)
+          .attr("text-anchor", "start")
+          .attr("font-weight", "bold");
+
+
+
+    //Happiness legend title
+      scatterplot.selectAll('label')
+          .data(circleSize)
+          .enter()
+          .append("text")
+          .attr("x",  width/2 + 550)
+          .attr("y", 530)
+          .text("Happiness Index")
+          .style("fill", "#000")
+          .attr("font-size", 24)
+          .attr("text-anchor", "start")
+          .attr("font-weight", "bold");
+
 
 
       // Add dots
@@ -138,8 +197,8 @@ function showScatterplot(clickedCountries) {
         .enter()
         .append("circle")
           .attr("cx", function (d) { return x(d.Gini); } )
-          .attr("cy", function (d) { return y(d.Happiness); } )
-          .attr("r", function (d) { return z(d.GDP * 2.5); } )
+          .attr("cy", function (d) { return y(d.GDP/1000); } )
+          .attr("r", function (d) { return z(d.Happiness * 2); } )
           .style("fill", function (d) { return myColor(d.Continent); } )
           .style("opacity", "0.7")
           .attr("stroke", "black")
@@ -151,7 +210,7 @@ function showScatterplot(clickedCountries) {
             scatterplot.select('.tooltipText')
               .attr("x", xPosition)
               .attr("y", yPosition)
-              .text(d.Country + " $"+ d.GDP/1000+"K")
+              .text(d.Country + " - GDP  $"+ d.GDP/1000+"K")
               .style("display", "inline");
           })
           .on("mousemove", function(d) {
@@ -166,7 +225,7 @@ function showScatterplot(clickedCountries) {
         .attr("x", 0)
         .attr("y", 0)
         .style("text-anchor", "middle")
-        .attr("font-size", "20px")
+        .attr("font-size", "24px")
         .attr("font-weight", "bold")
         .style("display", "none");
 
