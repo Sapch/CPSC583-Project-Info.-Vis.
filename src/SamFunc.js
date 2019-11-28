@@ -220,7 +220,7 @@ function showScatterplot(clickedCountries) {
         .attr("font-weight", "bold")
         .style("display", "none");
 
-      // Pan and zoom
+/*      // Pan and zoom
       var zoom = d3.zoom()
           .scaleExtent([.5, 20])
           .extent([[0, 0], [width, height]])
@@ -238,7 +238,7 @@ function showScatterplot(clickedCountries) {
               .attr('cy', function(d) {return new_yScale(d.GDP/1000)});
       }
 
-      zoom(scatterplot);
+      zoom(scatterplot); */
       darkLayer.style('visibility', 'visible');
 
   });
