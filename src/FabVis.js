@@ -1,17 +1,20 @@
 let width, clickedCountries;
 let height = 1200;
-let colours =  ["#ff00bf","#efed37", "#ff8e0f", "#f2080d",
-                "#d3294c", "#589428", "#6e6e71"];
+let bColours =  ["#ff00bf", "#d3554b", "#d3294c", "#589428",
+                "#6e6e71"];
+let mColours = ["#efed37", "#ff8e0f", "#f2080d"];
+
 let buttons = [{label: "Compare", class: "compare"},
-                {label: "Developed", class: "dev"},
-                {label: "Developing", class: "dev-ing"},
-                {label: "Underdeveloped", class: "undev"},
+                //{label: "Developed", class: "dev"},
+                //{label: "Developing", class: "dev-ing"},
+                //{label: "Underdeveloped", class: "undev"},
+                {label: "Development Status", class: "dev-status"},
                 {label: "Happiness Index", class: "happy"},
                 {label: "Living Index", class: "livindex"},
                 {label: "Reset", class: "reset"}];
 
 var legend, hoverData, legendTitle;
-var nullColour = '#fffdf8';
+var nullColour = '#ffffff';
 
 var prevColour, prevCountry;
 var firstime = true;
@@ -87,14 +90,14 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
           return (i*50) + 800;
         })
         .attr('height', 40)
-        .attr('width', 180)
+        .attr('width', 210)
         .attr('rx', 6)
         .attr('ry', 6)
         .style("stroke", "black")
         .style("stroke-width", 2)
         .style('cursor', 'pointer')
         .style("fill", (d, i) => {
-          return colours[i];
+          return bColours[i];
         } )
         .on("mouseover", (d) => {
           svg.select('.button-'+d.class)
@@ -274,22 +277,24 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         .style("stroke-width", 0.5)
         .style("opacity", 0.6);
 
-    d3.selectAll('path').style('fill', colours[6]);
+    d3.selectAll('path').style('fill', bColours[4]);
 
     function filterMap(button, index) {
       if (button.class !== "compare") {
-        d3.selectAll('path').style('fill', colours[6]).style('opacity', 0.6).style("stroke-width", 0.5);
+        d3.selectAll('path').style('fill', bColours[4]).style('opacity', 0.6).style("stroke-width", 0.5);
         clickedCountries = [];
       }
-      if (button.class === "dev") {
-        svg.selectAll('.Developed').style('fill', colours[index]);
+      if (button.class === "dev-status") {
+        svg.selectAll('.Developed').style('fill', mColours[0]);
+        svg.selectAll('.Developing').style('fill', mColours[1]);
+        svg.selectAll('.Underdeveloped').style('fill', mColours[2]);
       }
-      else if (button.class === "dev-ing") {
-        svg.selectAll(".Developing").style('fill', colours[index]);
-      }
-      else if (button.class === "undev") {
-        svg.selectAll(".Underdeveloped").style('fill', colours[index]);
-      }
+      // else if (button.class === "dev-ing") {
+      //   svg.selectAll(".Developing").style('fill', colours[index]);
+      // }
+      // else if (button.class === "undev") {
+      //   svg.selectAll(".Underdeveloped").style('fill', colours[index]);
+      // }
       else if (button.class === "happy") {
         d3.selectAll("path").style('fill', (d) => {
            if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
