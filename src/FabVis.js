@@ -1,10 +1,10 @@
 let width, clickedCountries;
 let height = 1200;
-let bColours =  ["#ff00bf", "#d3554b", "#d3294c", "#589428",
+let bColours =  ["#ff00bf", "#ff842b", "#d32655", "#589428",
                 "#6e6e71"];
 let mColours = ["#efed37", "#ff8e0f", "#f2080d"];
 
-let buttons = [{label: "Compare", class: "compare"},
+let buttons = [{label: "Scatterplot", class: "compare"},
                 //{label: "Developed", class: "dev"},
                 //{label: "Developing", class: "dev-ing"},
                 //{label: "Underdeveloped", class: "undev"},
@@ -59,6 +59,13 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
       .style("opacity", 0);
 
   var data = d3.map();
+
+  var dev = ["Developed", "Developing", "Underdeveloped"];
+ // var devC = ["#efed37", "#ff8e0f", "#f2080d"];
+
+  const colorDevelop = d3.scaleThreshold()
+        .domain(["Developed", "Developing", "Underdeveloped"]) //3 Colours
+        .range(["#ffffff","#efed37", "#ff8e0f", "#f2080d"]);
 
     const colorHappy = d3.scaleThreshold()
       .domain([3 , 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
@@ -393,16 +400,47 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         .style("text-anchor", "end")
         .text("Happiness Score");
 
-    svg.append('g')
-      .attr('class', 'scatter')
-      .style('visibility', 'hidden')
-      .append('rect')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', width)
-        .attr('height', height)
-        .style('fill', 'black')
-        .style('opacity', 0.8);
+      // draw legend Develop Status
+      var legend = svg.selectAll(".legend2")
+          .data(dev)
+          .enter().append("g")
+          .attr("class", "legend2")
+          .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
+
+      // draw legend colored rectangles
+      legend.append("rect")
+          .attr("x", width - 15)
+          .attr("y", 790)
+          .attr("width", 24)
+          .attr("height", 24)
+          .style("fill", colorDevelop);
+
+      // draw legend text
+      legend.append("text").attr("class", "text1")
+          .attr("x", width - 24)
+          .attr("y", 795)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+      //legend title Develop Status
+      var legendTitle2 = g.append("text").attr("class", "text2")
+          .attr("x", width - 50)
+          .attr("y", 750)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text("Develop Status");
+
+      svg.append('g')
+          .attr('class', 'scatter')
+          .style('visibility', 'hidden')
+          .append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', width)
+          .attr('height', height)
+          .style('fill', 'black')
+          .style('opacity', 0.8);
 
     });
 }
