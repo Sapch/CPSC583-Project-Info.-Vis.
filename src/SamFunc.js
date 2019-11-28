@@ -2,7 +2,7 @@
 function showScatterplot(clickedCountries) {
 
   let width = document.body.clientWidth, height = 1200,
-    margin = {top: 100, right: 200 + (width-1400)/2, bottom: 100, left: (width-1400)/2},
+    margin = {top: 50, right: 200 + (width-1600)/2, bottom: 50, left: (width-1600)/2},
       circleSize = [2, 6, 10],
     keys = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"],
     darkLayer = d3.select('.scatter');
@@ -12,16 +12,16 @@ function showScatterplot(clickedCountries) {
 
   scatterplot.append('rect')
       .attr('x', width/2 - 800)
-      .attr('y', 100)
-      .attr('width', 1600)
-      .attr('height', 1200)
+      .attr('y', 50)
+      .attr('width', 1800)
+      .attr('height', 1100)
       .attr('rx', 12)
       .attr('ry', 12)
       .style('fill', 'grey');
 
   scatterplot.append('text')
-      .attr('x', width/2 + 760)
-      .attr('y', 140)
+      .attr('x', width/2 + 860)
+      .attr('y', 90)
       .style('fill', 'black')
       .style('cursor', 'pointer')
       .attr('font-size', '35px')
@@ -36,7 +36,10 @@ function showScatterplot(clickedCountries) {
 
     data = data.filter((d) => {
       return clickedCountries.includes(d.CountryID);
-    })
+    });
+
+    var yTicks = 10;
+    if (clickedCountries.includes('QAT')) yTicks = 14;
 
     // Add X axis
     var x = d3.scaleLinear()
@@ -45,17 +48,16 @@ function showScatterplot(clickedCountries) {
 
     // Add Y axis
     var y = d3.scaleLinear()
-        .domain([0, 140])
-        .rangeRound([ height-margin.bottom, margin.top+100]);
+        .domain([0, yTicks*10])
+        .rangeRound([ height-margin.bottom-70, margin.top+70]);
 
     // Add a scale for bubble size
     var z = d3.scaleLinear()
         .domain([0, 10])
         .rangeRound([0, 10]);
 
-
-      var xAxis = d3.axisBottom(x)
-      var yAxis = d3.axisLeft(y)
+    var xAxis = d3.axisBottom(x)
+    var yAxis = d3.axisLeft(y)
 
       // var gX = scatterplot.append('g')
       //     // .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
@@ -77,30 +79,32 @@ function showScatterplot(clickedCountries) {
    var gX = scatterplot.append("g")
         .attr("transform", "translate(0," + (height-margin.bottom) +  ")")
         .call(xAxis.ticks(7).tickSize(-900).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
-        .attr("font-size", 18)
-        .append("text")
-        .attr("y", 80)
-        .attr("x", width/2)
-        .attr("fill", "#000")
-        .attr("font-size", 20)
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "middle")
-        .text("Gini (Economic Inequality)");
+        .attr("font-size", 18);
 
     //add y axis to scatterplot
   var gY =  scatterplot.append("g")
     .attr("transform", 'translate('+margin.left+',0)')
     .call(yAxis.ticks(14).tickSize(-1200).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
-    .attr("font-size", 18)
-    .append("text")
+    .attr("font-size", 18);
+
+  scatterplot.append("text")
     .attr("transform", "rotate(-90)")
-    .attr("y", -60)
+    .attr('y', (width/2) - 860)
     .attr('x', -height/2)
     .attr("fill", "#000")
     .attr("font-weight", "bold")
-    .attr("font-size", 20)
+    .attr("font-size", 28)
     .attr("text-anchor", "middle")
-    .text("GDP per capita ($1K)");
+    .text("GDP");
+
+  scatterplot.append("text")
+    .attr("y", height-70)
+    .attr("x", width/2 - 50)
+    .attr("fill", "#000")
+    .attr("font-size", 28)
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "middle")
+    .text("Gini Coefficient (economic inequality)");
 
     //legend rectangles
     var size = 30
@@ -108,7 +112,7 @@ function showScatterplot(clickedCountries) {
         .data(keys)
         .enter()
         .append("rect")
-          .attr("x", width/2 + 570)
+          .attr("x", width/2 + 670)
           .attr("y", function(d,i){
             return 200 + i*(size+5);
           })
@@ -123,7 +127,7 @@ function showScatterplot(clickedCountries) {
         .data(keys)
         .enter()
         .append("text")
-          .attr("x", width/2 + 620)
+          .attr("x", width/2 + 720)
           .attr("y", function(d,i){
             return 220 + i*(size+5);})
           .text(function(d){
@@ -138,7 +142,7 @@ function showScatterplot(clickedCountries) {
           .data(circleSize)
           .enter()
           .append("circle")
-          .attr("cx",  width/2 + 600)
+          .attr("cx",  width/2 + 700)
           .attr("cy", function(d,i){
               if (d==2) {
                   return 500 + 90;
@@ -159,10 +163,10 @@ function showScatterplot(clickedCountries) {
           .data(circleSize)
           .enter()
           .append("text")
-          .attr("x",  width/2 + 670)
+          .attr("x",  width/2 + 770)
           .attr("y", function(d,i){
               if (d==2) {
-                  return 500 + 90;
+                  return 600;
               }
               else{
                   return 500 + 30*d
@@ -213,10 +217,10 @@ function showScatterplot(clickedCountries) {
               .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)
               .style("display", "inline");
           })
-          .on("mousemove", function(d) {
-
-          })
-          .on("mouseout", function() { scatterplot.select('.tooltipText').style("display", "none"); });
+          .on("mouseout", function() {
+            scatterplot.select('.tooltipText')
+            .style("display", "none");
+          });
 
 
     //add tooltip
@@ -227,11 +231,10 @@ function showScatterplot(clickedCountries) {
         .style("text-anchor", "middle")
         .attr("font-size", "24px")
         .attr("font-weight", "bold")
-        .style("fill", "white")
         .style("display", "none");
 
       // Pan and zoom
-/*      var zoom = d3.zoom()
+      var zoom = d3.zoom()
           .scaleExtent([.5, 20])
           .extent([[0, 0], [width, height]])
           .on("zoom", zoomed);
@@ -245,12 +248,10 @@ function showScatterplot(clickedCountries) {
           gY.call(yAxis.scale(new_yScale));
           circles.attr("transform", d3.event.transform)
               .attr('cx', function(d) {return new_xScale(d.Gini)})
-              .attr('cy', function(d) {return new_yScale(d.Happiness)});
+              .attr('cy', function(d) {return new_yScale(d.GDP/1000)});
       }
 
-      zoom(scatterplot);*/
-
-
+      zoom(scatterplot);
       darkLayer.style('visibility', 'visible');
 
   });
