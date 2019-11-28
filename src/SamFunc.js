@@ -54,10 +54,23 @@ function showScatterplot(clickedCountries) {
     // Add a scale for bubble size
     var z = d3.scaleLinear()
         .domain([0, 10])
-        .rangeRound([0, 30]);
+        .rangeRound([0, 10]);
 
     var xAxis = d3.axisBottom(x);
     var yAxis = d3.axisLeft(y);
+
+      // var gX = scatterplot.append('g')
+      //     // .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height) + ')')
+      //     .call(xAxis.ticks(8).tickSize(-800).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(x))
+      //     // .attr("font-size", 20)
+      //     // .attr("font-weight", "bold")
+      //
+      // var gY = scatterplot.append('g')
+      //     // .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      //     .call(yAxis.ticks(12).tickSize(-1400).tickFormat(d3.format(".2f")) .tickSizeOuter(0).scale(y))
+      //     // .attr("font-size", 20)
+      //     // .attr("font-weight", "bold")
+
 
     // Add a scale for bubble color
     const myColor = d3.scaleOrdinal(d3.schemeSet1);
@@ -138,7 +151,7 @@ function showScatterplot(clickedCountries) {
                   return 500 + 30*d
               }})
           .attr("r", function(d,i){
-              return d*6
+              return d**1.7
           })
           .style("fill", 'white')
           .style("opacity", "0.7")
@@ -189,7 +202,7 @@ function showScatterplot(clickedCountries) {
         .append("circle")
           .attr("cx", function (d) { return x(d.Gini); } )
           .attr("cy", function (d) { return y(d.GDP/1000); } )
-          .attr("r", function (d) { return z(d.Happiness * 2); } )
+          .attr("r", function (d) { return z(d.Happiness ** 1.7); } )
           .style("fill", function (d) { return myColor(d.Continent); } )
           .style("opacity", "0.7")
           .attr("stroke", "black")
