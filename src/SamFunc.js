@@ -11,7 +11,7 @@ function showScatterplot(clickedCountries) {
 
 
   scatterplot.append('rect')
-      .attr('x', width/2 - 800)
+      .attr('x', width/2 - 900)
       .attr('y', 50)
       .attr('width', 1800)
       .attr('height', 1100)
@@ -34,12 +34,14 @@ function showScatterplot(clickedCountries) {
 
   d3.csv("Data-id.csv").then( function(data) {
 
-    data = data.filter((d) => {
-      return clickedCountries.includes(d.CountryID);
-    });
+    var yTicks = 14;
 
-    var yTicks = 10;
-    if (clickedCountries.includes('QAT')) yTicks = 14;
+    if (clickedCountries.length > 0) {
+      data = data.filter((d) => {
+        return clickedCountries.includes(d.CountryID);
+      });
+      if (!clickedCountries.includes('QAT')) yTicks = 10;
+    }
 
     // Add X axis
     var x = d3.scaleLinear()
