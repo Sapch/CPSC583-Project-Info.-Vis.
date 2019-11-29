@@ -84,7 +84,7 @@ function showScatterplot(clickedCountries) {
     .attr("font-weight", "bold")
     .attr("font-size", 28)
     .attr("text-anchor", "middle")
-    .text("GDP");
+    .text("GDP per Capita");
 
   scatterplot.append("text")
     .attr("y", height-70)
@@ -93,7 +93,7 @@ function showScatterplot(clickedCountries) {
     .attr("font-size", 28)
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
-    .text("Gini Coefficient (economic inequality)");
+    .text("Gini Coefficient (Economic Inequality)");
 
     //legend rectangles
     var size = 30
@@ -140,7 +140,7 @@ function showScatterplot(clickedCountries) {
                   return 500 + 30*d
               }})
           .attr("r", function(d,i){
-              return d**1.7
+              return d**1.8
           })
           .style("fill", 'white')
           .style("opacity", "0.7")
@@ -191,7 +191,7 @@ function showScatterplot(clickedCountries) {
         .append("circle")
           .attr("cx", function (d) { return x(d.Gini); } )
           .attr("cy", function (d) { return y(d.GDP/1000); } )
-          .attr("r", function (d) { return z(d.Happiness ** 1.7); } )
+          .attr("r", function (d) { return z(d.Happiness ** 1.8); } )
           .style("fill", function (d) { return myColor(d.Continent); } )
           .style("opacity", "0.7")
           .attr("stroke", "black")
