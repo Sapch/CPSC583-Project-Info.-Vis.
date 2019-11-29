@@ -222,15 +222,15 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
           prevColours.splice(i, 1);
         }
         else {
-            if(nullC.includes(d.id))
-                alert("No data for this country");
-            else {
+            // if(nullC.includes(d.id))
+            //     alert("No data for this country");
+            // else {
                 prevColours.push(d3.select(this).style('fill'));
                 d3.select(this)
                     .style("fill", "#ff00bf")
                     .style("opacity", 1.0).style('stroke', '#000000').style('stroke-width', 3);
                 clickedCountries.push(d.id);
-            }
+            //}
         }
     }
 
@@ -292,9 +292,24 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         clickedCountries = [];
       }
       if (button.class === "dev-status") {
-        svg.selectAll('.Developed').style('fill', mColours[0]);
-        svg.selectAll('.Developing').style('fill', mColours[1]);
-        svg.selectAll('.Underdeveloped').style('fill', mColours[2]);
+          // svg.selectAll('.Developed').style('fill', mColours[0]);
+          // svg.selectAll('.Developing').style('fill', mColours[1]);
+          // svg.selectAll('.Underdeveloped').style('fill', mColours[2]);
+          d3.selectAll(".Developed").style('fill', (d) => {
+              if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
+                  return nullColour;
+              else return mColours[0];
+          });
+          d3.selectAll(".Developing").style('fill', (d) => {
+              if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
+                  return nullColour;
+              else return mColours[1];
+          });
+          d3.selectAll(".Underdeveloped").style('fill', (d) => {
+              if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
+                  return nullColour;
+              else return mColours[2];
+          });
       }
       // else if (button.class === "dev-ing") {
       //   svg.selectAll(".Developing").style('fill', colours[index]);
