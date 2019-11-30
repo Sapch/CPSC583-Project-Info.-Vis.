@@ -1,16 +1,19 @@
 let width, clickedCountries;
 let height = 1200;
-let colours =  ["#efed37", "#ff8e0f", "#f2080d", "#e8e9ec",
-                "#ee7497", "#54f04c"];
-let buttons = [{label: "Developed", class: "dev"},
-                {label: "Developing", class: "dev-ing"},
-                {label: "Underdeveloped", class: "undev"},
+let bColours =  ["#ff00bf", "#ff842b", "#d32655", "#589428",
+                "#6e6e71"];
+let mColours = ["#efed37", "#ff8e0f", "#f2080d"];
+
+let buttons = [{label: "Scatterplot", class: "compare"},
+                {label: "Development Status", class: "dev-status"},
                 {label: "Happiness Index", class: "happy"},
                 {label: "Living Index", class: "livindex"},
                 {label: "Reset", class: "reset"}];
-var legend, hoverData, legendTitle;
 
-var prevColour, prevCountry;
+var legend, hoverData, legendTitle;
+var nullColour = '#ffffff';
+
+var prevColours;
 var firstime = true;
 
 window.onload = function() {
@@ -18,11 +21,15 @@ window.onload = function() {
 width = document.body.clientWidth;
 clickedCountries = [];
 prevColours = [];
+var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI","CMR","CAF","TCD","CUB","COD","DJI","TLS","GNQ",
+            "ERI","FLK","FJI","GUF","ATF","GAB","GMB","GRL","GIN","GNB","GUY","HTI","HND","CIV","KGZ","LAO","LSO","LBR","LBY","MDG",
+            "MWI","MLI","MRT","MDA","MNE","MAR","MMR","NCL","NIC","NER","PRK","OMN",'PNG',"PRI","SRB","COG","SEN","SLE","SLB","SOM",
+            "KOR","SSD","SDN","SUR","SWZ","SYR","TWN","TJK","BHS","TGO","TTO","TKM","TZA","VUT","VNM","PSE","ESH","YEM"];
 
   let svg = d3.select("svg")
     .attr('width', width)
     .attr('height', height)
-    .style("background-color","#b7c4ff");
+    .style("background-color","#8cbdde");
 
 
   var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/11);
@@ -50,28 +57,30 @@ prevColours = [];
 
   var data = d3.map();
 
+  var dev = ["Developed", "Developing", "Underdeveloped"];
+
+  const colorDevelop = d3.scaleThreshold()
+        .domain(["Developed", "Developing", "Underdeveloped"]) //3 Colours
+        .range(["#ffffff","#efed37", "#ff8e0f", "#f2080d"]);
+
     const colorHappy = d3.scaleThreshold()
-      .domain([3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
-      .range(['#3c4a61', '#505c71', '#646f82', '#798293',
-            '#8e96a4', '#a4aab6', '#babfc8', '#d1d4da',
-            '#e8e9ec', '#ffffff']
-      );
+      .domain([3 , 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
+      .range(['#ffffb9', '#ffe490', '#ffc773', '#ffa85f',
+                '#f78c53', '#ea7049', '#da5640', '#c63d35',
+                '#b02628', '#961017', '#7a0000']);
 
   const colorLiving = d3.scaleThreshold()
-      .domain([30, 40, 50, 60, 70, 80, 90, 100, 110, 120]) //10 Colours
-      .range(['#fd82ab', '#ee7497', '#df6783', '#d05970',
-                '#c14c5d', '#b13e4b', '#a23139', '#922328',
-                '#821417', '#730003']);
-
+      .domain([20 , 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]) //12 Colours
+      .range(['#d7d1b0', '#c1c586', '#9bbe4c', '#84b040',
+                '#6da233', '#589428', '#43861d', '#2f7812',
+                '#1b6a08', '#085b02', '#004d00']);
 
   // load data
-  var worldmap = d3.json("countries.geojson");
-  var countries = d3.csv("Data.csv");
+  var worldmap = d3.json("Geo-Data.geojson");
 
-  Promise.all([worldmap, countries]).then(function (values) {
+  Promise.all([worldmap]).then(function (values) {
 
-    var searchbtn = document.getElementById("searchBtn");
-    searchbtn.onclick = search;
+    document.getElementById("searchForm").onsubmit = search;
 
     svg.selectAll('.button')
       .data(buttons)
@@ -83,12 +92,14 @@ prevColours = [];
           return (i*50) + 800;
         })
         .attr('height', 40)
-        .attr('width', 180)
+        .attr('width', 210)
         .attr('rx', 6)
         .attr('ry', 6)
+        .style("stroke", "black")
+        .style("stroke-width", 2)
         .style('cursor', 'pointer')
         .style("fill", (d, i) => {
-          return colours[i];
+          return bColours[i];
         } )
         .on("mouseover", (d) => {
           svg.select('.button-'+d.class)
@@ -138,27 +149,25 @@ prevColours = [];
         return d && d.properties ? d.properties.developStatus : null;
     }
 
-
     function mouseOver(d) {
         d3.select(this)
           .transition()
           .duration(200)
           .style("opacity", 1)
-          .style('stroke-width', 3);
+          .style('stroke-width', 3.5);
 
         addText(countryName(d), continentName(d));
 
-        if (d.properties.livingIndex !== "") {
-          tooltip.transition()
-            .duration(100)
-            .style("opacity", .90);
+        tooltip.transition()
+          .duration(100)
+          .style("opacity", 0.9);
 
-          tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex + "<br />" + "Happiness Score: " + d.properties.happinessRank)
-            .style("left", (d3.event.pageX) + "px")
-            .style("font-size", "17px")
-            .style("font-weight", "bold")
-            .style("top", (d3.event.pageY - 28) + "px");
-        }
+        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex +
+              "<br />" + "Happiness Score: " + d.properties.happinessRank)
+          .style("left", (d3.event.pageX) + "px")
+          .style("font-size", "17px")
+          .style("font-weight", "bold")
+          .style("top", (d3.event.pageY - 28) + "px");
     }
 
 
@@ -170,7 +179,7 @@ prevColours = [];
               if (clickedCountries.includes(d.id)) return 1.0;
               return 0.6;
             })
-            .style('stroke-width', 0.8);
+            .style('stroke-width', 0.5);
       //Clear province name
       bigText.text('');
       bigText1.text('');
@@ -181,27 +190,33 @@ prevColours = [];
     }
 
 
-    function clicked(d){
+    function clicked(d, i){
         if (clickedCountries.includes(d.id)) {
           d3.select(this)
               .style("fill", () => {
                 return prevColours[clickedCountries.indexOf(d.id)];
               })
-              .style("opacity", 0.6);
+              .style("opacity", 0.6)
+              .style('stroke-width', 0.5);
           var i = clickedCountries.indexOf(d.id);
           clickedCountries.splice(i, 1);
           prevColours.splice(i, 1);
         }
         else {
-          prevColours.push(d3.select(this).style('fill'));
-          d3.select(this)
-              .style("fill", "#ff00bf")
-              .style("opacity", 1.0);
-          clickedCountries.push(d.id);
+            if(nullC.includes(d.id))
+                alert("Not enough data from this country for the scatterplot");
+            else {
+                prevColours.push(d3.select(this).style('fill'));
+                d3.select(this)
+                    .style("fill", "#ff00bf")
+                    .style("opacity", 1.0).style('stroke', '#000000').style('stroke-width', 3);
+                clickedCountries.push(d.id);
+            }
         }
     }
 
-    function search() {
+    function search(e) {
+      e.preventDefault();
       let countryName = document.getElementById("countryN").value.toLowerCase();
       let d = svg.selectAll('path')
         .filter((d) => {
@@ -216,14 +231,14 @@ prevColours = [];
         if (!clickedCountries.includes(d.id)) {
           clickedCountries.push(d.id);
           prevColours.push(dPath.style('fill'));
-          dPath.style('fill', "#ff00bf").style('opacity', 1);
+          dPath.style('fill', "#ff00bf").style('opacity', 1).style('stroke', '#000000').style('stroke-width', 3);
         }
       }
     }
 
     // draw map
     svg.selectAll("path")
-      .data(values[0].features)
+      .data(values[0])
       .enter()
       .append("path")
         .attr("class", d => "continent-" + d.properties.name)
@@ -247,32 +262,42 @@ prevColours = [];
         .on("mouseleave", mouseLeave)
         .on("click", clicked)
         .style("stroke", "black")
-        .style("stroke-width", 0.8)
+        .style("stroke-width", 0.5)
         .style("opacity", 0.6);
 
-    d3.selectAll('path').style('fill', colours[5]);
+    d3.selectAll('path').style('fill', bColours[4]);
 
     function filterMap(button, index) {
-      d3.selectAll('path').style('fill', colours[5]).style('opacity', 0.6);
-      clickedCountries = [];
-      if (button.class === "dev") {
-        svg.selectAll('.Developed').style('fill', colours[index]);
+      if (button.class !== "compare") {
+        d3.selectAll('path').style('fill', bColours[4]).style('opacity', 0.6).style("stroke-width", 0.5);
+        clickedCountries = [];
+        prevColours = [];
       }
-      else if (button.class === "dev-ing") {
-        svg.selectAll(".Developing").style('fill', colours[index]);
+      if (button.class === "dev-status") {
+        svg.selectAll('.Developed').style('fill', mColours[0]);
+        svg.selectAll('.Developing').style('fill', mColours[1]);
+        svg.selectAll('.Underdeveloped').style('fill', mColours[2]);
       }
-      else if (button.class === "undev") {
-        svg.selectAll(".Underdeveloped").style('fill', colours[index]);
-      }
+
       else if (button.class === "happy") {
         d3.selectAll("path").style('fill', (d) => {
-            return colorHappy(d.properties.happinessRank);
+           if(d.properties.happiness == 0)
+               return nullColour;
+            else
+               return colorHappy(d.properties.happiness);
         });
       }
       else if (button.class === "livindex") {
         d3.selectAll("path").style('fill', function (d) {
-            return colorLiving(d.properties.livingIndex);
+            if(d.properties.livingIndex == 0)
+                return nullColour;
+            else
+                return colorLiving(d.properties.livingIndex);
         });
+      }
+
+      else if(button.class === "compare"){
+        showScatterplot(clickedCountries);
       }
     }
 
@@ -299,7 +324,7 @@ prevColours = [];
     // draw legend colored rectangles
     legend.append("rect")
         .attr("x", width - 18)
-        .attr("y", 400)
+        .attr("y", 430)
         .attr("width", 24)
         .attr("height", 24)
         .style("fill", colorHappy);
@@ -307,7 +332,7 @@ prevColours = [];
     // draw legend text
     legend.append("text").attr("class", "text1")
         .attr("x", width - 24)
-        .attr("y", 408)
+        .attr("y", 438)
         .attr("dy", ".65em")
         .style("text-anchor", "end")
         .text(function(d) { return d;})
@@ -342,15 +367,57 @@ prevColours = [];
         .attr("y", 16)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text("Cost of Living Index")
+        .text("Cost of Living Index");
 
       //legend title happiness
     var legendTitle1 = g.append("text").attr("class", "text2")
         .attr("x", width - 30)
-        .attr("y", 370)
+        .attr("y", 390)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text("Happiness Score")
+        .text("Happiness Score");
+
+      // draw legend Develop Status
+      var legend = svg.selectAll(".legend2")
+          .data(dev)
+          .enter().append("g")
+          .attr("class", "legend2")
+          .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
+
+      // draw legend colored rectangles
+      legend.append("rect")
+          .attr("x", width - 15)
+          .attr("y", 790)
+          .attr("width", 24)
+          .attr("height", 24)
+          .style("fill", colorDevelop);
+
+      // draw legend text
+      legend.append("text").attr("class", "text1")
+          .attr("x", width - 24)
+          .attr("y", 795)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+      //legend title Develop Status
+      var legendTitle2 = g.append("text").attr("class", "text2")
+          .attr("x", width - 50)
+          .attr("y", 750)
+          .attr("dy", ".35em")
+          .style("text-anchor", "end")
+          .text("Develop Status");
+
+      svg.append('g')
+          .attr('class', 'scatter')
+          .style('visibility', 'hidden')
+          .append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', width)
+          .attr('height', height)
+          .style('fill', 'black')
+          .style('opacity', 0.8);
 
     });
 }
