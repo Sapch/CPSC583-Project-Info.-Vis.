@@ -5,9 +5,6 @@ let bColours =  ["#ff00bf", "#ff842b", "#d32655", "#589428",
 let mColours = ["#efed37", "#ff8e0f", "#f2080d"];
 
 let buttons = [{label: "Scatterplot", class: "compare"},
-                //{label: "Developed", class: "dev"},
-                //{label: "Developing", class: "dev-ing"},
-                //{label: "Underdeveloped", class: "undev"},
                 {label: "Development Status", class: "dev-status"},
                 {label: "Happiness Index", class: "happy"},
                 {label: "Living Index", class: "livindex"},
@@ -16,7 +13,7 @@ let buttons = [{label: "Scatterplot", class: "compare"},
 var legend, hoverData, legendTitle;
 var nullColour = '#ffffff';
 
-var prevColour, prevCountry;
+var prevColours;
 var firstime = true;
 
 window.onload = function() {
@@ -61,7 +58,6 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
   var data = d3.map();
 
   var dev = ["Developed", "Developing", "Underdeveloped"];
- // var devC = ["#efed37", "#ff8e0f", "#f2080d"];
 
   const colorDevelop = d3.scaleThreshold()
         .domain(["Developed", "Developing", "Underdeveloped"]) //3 Colours
@@ -80,10 +76,9 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
                 '#1b6a08', '#085b02', '#004d00']);
 
   // load data
-  var worldmap = d3.json("countries.geojson");
-  var countries = d3.csv("Data.csv");
+  var worldmap = d3.json("Geo-Data.geojson");
 
-  Promise.all([worldmap, countries]).then(function (values) {
+  Promise.all([worldmap]).then(function (values) {
 
     document.getElementById("searchForm").onsubmit = search;
 
@@ -163,30 +158,16 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
         addText(countryName(d), continentName(d));
 
-        if (d.properties.livingIndex !== "") {
-          tooltip.transition()
-            .duration(100)
-            .style("opacity", 0.9);
+        tooltip.transition()
+          .duration(100)
+          .style("opacity", 0.9);
 
-          tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex +
+        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex +
               "<br />" + "Happiness Score: " + d.properties.happinessRank)
-            .style("left", (d3.event.pageX) + "px")
-            .style("font-size", "17px")
-            .style("font-weight", "bold")
-            .style("top", (d3.event.pageY - 28) + "px");
-        }
-
-        else {
-            tooltip.transition()
-                .duration(100)
-                .style("opacity", .90);
-            tooltip.html(d.properties.name)
-                .style("left", (d3.event.pageX) + "px")
-                .style("font-size", "17px")
-                .style("font-weight", "bold")
-                .style("top", (d3.event.pageY - 28) + "px");
-
-        }
+          .style("left", (d3.event.pageX) + "px")
+          .style("font-size", "17px")
+          .style("font-weight", "bold")
+          .style("top", (d3.event.pageY - 28) + "px");
     }
 
 
@@ -222,15 +203,15 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
           prevColours.splice(i, 1);
         }
         else {
-            // if(nullC.includes(d.id))
-            //     alert("No data for this country");
-            // else {
+            if(nullC.includes(d.id))
+                alert("Not enough data from this country for the scatterplot");
+            else {
                 prevColours.push(d3.select(this).style('fill'));
                 d3.select(this)
                     .style("fill", "#ff00bf")
                     .style("opacity", 1.0).style('stroke', '#000000').style('stroke-width', 3);
                 clickedCountries.push(d.id);
-            //}
+            }
         }
     }
 
@@ -257,7 +238,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
     // draw map
     svg.selectAll("path")
-      .data(values[0].features)
+      .data(values[0])
       .enter()
       .append("path")
         .attr("class", d => "continent-" + d.properties.name)
@@ -290,39 +271,20 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
       if (button.class !== "compare") {
         d3.selectAll('path').style('fill', bColours[4]).style('opacity', 0.6).style("stroke-width", 0.5);
         clickedCountries = [];
+        prevColours = [];
       }
       if (button.class === "dev-status") {
-          // svg.selectAll('.Developed').style('fill', mColours[0]);
-          // svg.selectAll('.Developing').style('fill', mColours[1]);
-          // svg.selectAll('.Underdeveloped').style('fill', mColours[2]);
-          d3.selectAll(".Developed").style('fill', (d) => {
-              if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
-                  return nullColour;
-              else return mColours[0];
-          });
-          d3.selectAll(".Developing").style('fill', (d) => {
-              if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
-                  return nullColour;
-              else return mColours[1];
-          });
-          d3.selectAll(".Underdeveloped").style('fill', (d) => {
-              if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
-                  return nullColour;
-              else return mColours[2];
-          });
+        svg.selectAll('.Developed').style('fill', mColours[0]);
+        svg.selectAll('.Developing').style('fill', mColours[1]);
+        svg.selectAll('.Underdeveloped').style('fill', mColours[2]);
       }
-      // else if (button.class === "dev-ing") {
-      //   svg.selectAll(".Developing").style('fill', colours[index]);
-      // }
-      // else if (button.class === "undev") {
-      //   svg.selectAll(".Underdeveloped").style('fill', colours[index]);
-      // }
+
       else if (button.class === "happy") {
         d3.selectAll("path").style('fill', (d) => {
-           if(d.properties.happinessRank == 0 || d.properties.livingIndex == 0)
+           if(d.properties.happiness == 0)
                return nullColour;
             else
-               return colorHappy(d.properties.happinessRank);
+               return colorHappy(d.properties.happiness);
         });
       }
       else if (button.class === "livindex") {

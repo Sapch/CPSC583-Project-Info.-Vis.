@@ -3,13 +3,13 @@ function showScatterplot(clickedCountries) {
 
   let width = document.body.clientWidth, height = 1200,
     margin = {top: 50, right: 200 + (width-1600)/2, bottom: 50, left: (width-1600)/2},
-      circleSize = [2, 6, 10],
+      circleSize = [3, 8],
     keys = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"],
     darkLayer = d3.select('.scatter');
 
   let scatterplot = darkLayer.append('g').attr('class', 'secondVis');
 
-
+  //scatterplot background
   scatterplot.append('rect')
       .attr('x', width/2 - 900)
       .attr('y', 50)
@@ -19,6 +19,7 @@ function showScatterplot(clickedCountries) {
       .attr('ry', 12)
       .style('fill', 'grey');
 
+  //scatterplot close button
   scatterplot.append('text')
       .attr('x', width/2 + 860)
       .attr('y', 90)
@@ -76,6 +77,7 @@ function showScatterplot(clickedCountries) {
     .call(yAxis.ticks(yTicks).tickSize(-1400).tickFormat(d3.format("d")) .tickSizeOuter(0).scale(y))
     .attr("font-size", 18);
 
+    //y axis title
   scatterplot.append("text")
     .attr("transform", "rotate(-90)")
     .attr('y', (width/2) - 860)
@@ -86,6 +88,7 @@ function showScatterplot(clickedCountries) {
     .attr("text-anchor", "middle")
     .text("GDP per Capita");
 
+    //x axis title
   scatterplot.append("text")
     .attr("y", height-70)
     .attr("x", width/2 - 50)
@@ -133,13 +136,10 @@ function showScatterplot(clickedCountries) {
           .append("circle")
           .attr("cx",  width/2 + 700)
           .attr("cy", function(d,i){
-              if (d==2) {
-                  return 500 + 90;
-              }
-              else{
-                  return 500 + 30*d
-              }})
-          .attr("r", function(d,i){
+            if (i == 0) return 580;
+            return  550 + ((d**1.8)*2) + (i*50);
+          })
+          .attr("r", function(d){
               return d**1.8
           })
           .style("fill", 'white')
@@ -154,35 +154,25 @@ function showScatterplot(clickedCountries) {
           .append("text")
           .attr("x",  width/2 + 770)
           .attr("y", function(d,i){
-              if (d==2) {
-                  return 600;
-              }
-              else{
-                  return 510 + 30*d
-              }})
-          .text(function(d,i){
+            if (i == 0) return 590;
+            return  560 + ((d**1.8)*2) + (i*50);
+          })
+          .text(function(d){
               return d;})
           .style("fill", "#000")
           .attr("font-size", 32)
           .attr("text-anchor", "start")
           .attr("font-weight", "bold");
 
-
-
     //Happiness legend title
-      scatterplot.selectAll('label')
-          .data(circleSize)
-          .enter()
-          .append("text")
+      scatterplot.append("text")
           .attr("x",  width/2 + 630)
           .attr("y", 530)
-          .text("Happiness Score (0-10)")
+          .text("Happiness Score")
           .style("fill", "#000")
-          .attr("font-size", 24)
+          .attr("font-size", 30)
           .attr("text-anchor", "start")
           .attr("font-weight", "bold");
-
-
 
       // Add dots
   var circles = scatterplot.selectAll(".dot")
