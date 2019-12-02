@@ -190,7 +190,19 @@ function showScatterplot(clickedCountries) {
             var xPosition = d3.mouse(this)[0];
             var yPosition = d3.mouse(this)[1]-40;
 
-            scatterplot.select('.tooltipText')
+              tooltip.transition()
+                  .duration(100)
+                  .style("opacity", 0.9);
+
+              tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex +
+                  "<br />" + "Happiness Score: " + d.properties.happinessRank)
+                  .style("left", (d3.event.pageX) + "px")
+                  .style("font-size", "17px")
+                  .style("font-weight", "bold")
+                  .style("top", (d3.event.pageY - 28) + "px");
+
+              console.log(d.Country);
+              scatterplot.select('.tooltipText')
               .attr("x", xPosition)
               .attr("y", yPosition)
               .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)

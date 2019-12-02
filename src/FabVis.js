@@ -158,12 +158,18 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
         addText(countryName(d), continentName(d));
 
+        var happy = d.properties.happiness;
+        let happy1 = parseFloat(happy).toFixed(3);
+        var living = d.properties.livingIndex;
+        console.log(happy)
+        let living1 = parseFloat(living).toFixed(3);
+
         tooltip.transition()
           .duration(100)
           .style("opacity", 0.9);
 
-        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + d.properties.livingIndex +
-              "<br />" + "Happiness Score: " + d.properties.happinessRank)
+        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + living1 +
+              "<br />" + "Happiness Score: " + happy1)
           .style("left", (d3.event.pageX) + "px")
           .style("font-size", "17px")
           .style("font-weight", "bold")
