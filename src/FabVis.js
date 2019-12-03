@@ -15,7 +15,6 @@ var nullColour = '#ffffff';
 var nullLabel = ["NULL"];
 
 var prevColours;
-var firstime = true;
 
 window.onload = function() {
 
@@ -160,17 +159,17 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
         addText(countryName(d), continentName(d));
 
-        var happy = d.properties.happiness;
-        let happy1 = parseFloat(happy).toFixed(3);
-        var living = d.properties.livingIndex;
-        let living1 = parseFloat(living).toFixed(3);
+        var happy = +d.properties.happiness;
+        //let happy1 = parseFloat(happy).toFixed(3);
+        var living = +d.properties.livingIndex;
+        //let living1 = parseFloat(living).toFixed(3);
 
         tooltip.transition()
           .duration(100)
           .style("opacity", 0.9);
 
-        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + living1 +
-              "<br />" + "Happiness Score: " + happy1)
+        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + (living1.toFixed(3)) +
+              "<br />" + "Happiness Score: " + (happy1.toFixed(3))
           .style("left", (d3.event.pageX) + "px")
           .style("font-size", "17px")
           .style("font-weight", "bold")
@@ -235,16 +234,11 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         });
             if (d.length > 0) {
                 d = d[0];
-                if(nullC.includes(d.id)) {
-                    alert("Not enough data from this country for the scatterplot");
-                }
-                else {
-                    if (!clickedCountries.includes(d.id)) {
-                        clickedCountries.push(d.id);
-                        prevColours.push(dPath.style('fill'));
-                        dPath.style('fill', "#ff00bf").style('opacity', 1).style('stroke', '#000000').style('stroke-width', 3);
-                    }
-                }
+                svg.select('.continent-'+d.id)
+                  .transition()
+                  .duration(200)
+                  .style("opacity", 1)
+                  .style('stroke-width', 3.5);
             }
     }
 
@@ -253,7 +247,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
       .data(values[0])
       .enter()
       .append("path")
-        .attr("class", d => "continent-" + d.properties.name)
+        .attr("class", d => "continent-" + d.id)
         .attr("d", path)
         .attr("fill", function (d) {
           if (developmentStatus(d) == "Developed") {

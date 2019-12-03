@@ -144,6 +144,7 @@ function showScatterplot(clickedCountries) {
     .attr("text-anchor", "start")
     .attr("font-weight", "bold");
 
+  var tooltip = d3.select(".tooltip");
 
   d3.csv("Data-id.csv").then( function(data) {
 
@@ -182,99 +183,6 @@ function showScatterplot(clickedCountries) {
       .call(yAxis.ticks(yTicks).tickSize(-1400))
       .attr("font-size", 18);
 
-    // Draw Datapoints
-    var circlesG = scatterplot.append("g")
-      .attr("clip-path", "url(#clipper)")
-      .classed("circlesG", false);
-
-      var circlesG1 = scatterplot.append("g");
-          //.classed("circlesG", true);
-
-    var circles = circlesG.selectAll(".dot")
-      .data(data)
-      .enter()
-      .append("circle")
-        .attr("class", d => { return "dot COUNTRY-"+ d.Country; } )
-        .attr('cx', function(d) {return xScale(d.Gini)})
-        .attr('cy', function(d) {return yScale(d.GDP/1000)})
-        .attr("r", function (d) { return zScale(d.Happiness ** 1.8); } )
-        .style("fill", function (d) { return myColor(d.Continent); } )
-        .style("opacity", "0.7")
-        .attr("stroke", "black")
-        .style("stroke-width", "2px");
-        // .on("mouseover", function(d) {
-        //     var xPosition = d3.mouse(this)[0];
-        //     var yPosition = d3.mouse(this)[1]-40;
-        //
-        //     console.log("hello")
-        //     tooltip.transition()
-        //         .duration(100)
-        //         .style("opacity", 0.9);
-        //
-        //     tooltip.html(d.Happiness)
-        //         .style("left", (d3.event.pageX) + "px")
-        //         .style("font-size", "17px")
-        //         .style("font-weight", "bold")
-        //         .style("top", (d3.event.pageY - 28) + "px");
-        //
-        //     // scatterplot.select('.tooltipText')
-        //     //     .attr("x", xPosition)
-        //     //     .attr("y", yPosition)
-        //     //     .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)
-        //     //     .style("display", "inline");
-        // })
-        // .on("mouseout", function() {
-        //     scatterplot.select('.tooltipText')
-        //         .style("display", "none");
-        // });
-
-   //     drawCircles();
-
-      function drawCircles() {
-          circlesG1.selectAll(".dot")
-              .data(data)
-              .enter()
-              .append("circle")
-              .attr("class", d => {return "dot"})
-              .attr('cx', function (d) {return xScale(d.Gini)})
-              .attr('cy', function (d) {return yScale(d.GDP / 1000)})
-              .attr("r", function (d) {return zScale(d.Happiness ** 1.8);})
-              // .style("fill", function (d) {
-              //     return myColor(d.Continent);
-              // })
-               .style("opacity", "0.7")
-               .attr("stroke", "black")
-               .style("stroke-width", "2px")
-              .attr("fill", "transparent")
-              .style('cursor', 'pointer')
-              .on('mouseover', function (d) {
-                  var xPosition = d3.mouse(this)[0];
-                  var yPosition = d3.mouse(this)[1] - 40;
-
-                  console.log("hello")
-                  tooltip.transition()
-                      .duration(100)
-                      .style("opacity", 0.9);
-
-                  tooltip.html(d.Happiness)
-                      .style("left", (d3.event.pageX) + "px")
-                      .style("font-size", "17px")
-                      .style("font-weight", "bold")
-                      .style("top", (d3.event.pageY - 28) + "px");
-
-                  // scatterplot.select('.tooltipText')
-                  //     .attr("x", xPosition)
-                  //     .attr("y", yPosition)
-                  //     .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)
-                  //     .style("display", "inline");
-              })
-              .on("mouseout", function () {
-                  scatterplot.select('.tooltipText')
-                      .style("display", "none");
-              });
-      }
-
-
     // Pan and zoom
     var zoom = d3.zoom()
         .scaleExtent([.5, 20])
@@ -288,6 +196,53 @@ function showScatterplot(clickedCountries) {
         .style("pointer-events", "all")
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
         .call(zoom);
+
+    // Draw Datapoints
+    var circlesG = scatterplot.append("g")
+      .attr("clip-path", "url(#clipper)")
+      .classed("circlesG", true);
+
+
+    var circles = circlesG.selectAll(".dot")
+      .data(data)
+      .enter()
+      .append("circle")
+        .attr("class", d => { return "dot COUNTRY-"+ d.Country; } )
+        .attr('cx', function(d) {return xScale(d.Gini)})
+        .attr('cy', function(d) {return yScale(d.GDP/1000)})
+        .attr("r", function (d) { return zScale(d.Happiness ** 1.8); } )
+        .style("fill", function (d) { return myColor(d.Continent); } )
+        .style("opacity", "0.7")
+        .attr("stroke", "black")
+        .style("stroke-width", "2px");
+        .on("mouseover", function(d) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+
+          let dHappiness = +d.properties.happiness;
+          let dGini = +d.properties.Gini;
+          let dGDP = +d.properties.GDP;
+
+          tooltip.html(d.properties.name +  "<br />"  +  "Happiness Score: " + dHappiness.toFixed(3) +
+            "<br />" + "GDP: " + dGDP.toFixed(3) + "Gini: " + dGini.toFixed(3))
+            .style("left", (d3.event.pageX+10) + "px")
+            .style("font-size", "17px")
+            .style("font-weight", "bold")
+            .style("top", (d3.event.pageY+10) + "px");
+
+        })
+        .on("mouseout", function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style("opacity", 0.7)
+
+          tooltip.transition()
+            .duration(200)
+            .style("opacity", 0);
+        });
 
     function zoomed() {
     // create new scale ojects based on event
