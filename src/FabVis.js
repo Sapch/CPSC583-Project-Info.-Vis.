@@ -12,6 +12,7 @@ let buttons = [{label: "Scatterplot", class: "compare"},
 
 var legend, hoverData, legendTitle;
 var nullColour = '#ffffff';
+var nullLabel = ["NULL"];
 
 var prevColours;
 var firstime = true;
@@ -21,6 +22,7 @@ window.onload = function() {
 width = document.body.clientWidth;
 clickedCountries = [];
 prevColours = [];
+
 var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI","CMR","CAF","TCD","CUB","COD","DJI","TLS","GNQ",
             "ERI","FLK","FJI","GUF","ATF","GAB","GMB","GRL","GIN","GNB","GUY","HTI","HND","CIV","KGZ","LAO","LSO","LBR","LBY","MDG",
             "MWI","MLI","MRT","MDA","MNE","MAR","MMR","NCL","NIC","NER","PRK","OMN",'PNG',"PRI","SRB","COG","SEN","SLE","SLB","SOM",
@@ -161,7 +163,6 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         var happy = d.properties.happiness;
         let happy1 = parseFloat(happy).toFixed(3);
         var living = d.properties.livingIndex;
-        console.log(happy)
         let living1 = parseFloat(living).toFixed(3);
 
         tooltip.transition()
@@ -232,14 +233,19 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         .filter((d) => {
           return d.properties.name.toLowerCase() === countryName;
         });
-      if (d.length > 0) {
-        d = d[0];
-        if (!clickedCountries.includes(d.id)) {
-          clickedCountries.push(d.id);
-          prevColours.push(dPath.style('fill'));
-          dPath.style('fill', "#ff00bf").style('opacity', 1).style('stroke', '#000000').style('stroke-width', 3);
-        }
-      }
+            if (d.length > 0) {
+                d = d[0];
+                if(nullC.includes(d.id)) {
+                    alert("Not enough data from this country for the scatterplot");
+                }
+                else {
+                    if (!clickedCountries.includes(d.id)) {
+                        clickedCountries.push(d.id);
+                        prevColours.push(dPath.style('fill'));
+                        dPath.style('fill', "#ff00bf").style('opacity', 1).style('stroke', '#000000').style('stroke-width', 3);
+                    }
+                }
+            }
     }
 
     // draw map
@@ -330,7 +336,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
     // draw legend colored rectangles
     legend.append("rect")
         .attr("x", width - 18)
-        .attr("y", 430)
+        .attr("y", 450)
         .attr("width", 24)
         .attr("height", 24)
         .style("fill", colorHappy);
@@ -338,7 +344,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
     // draw legend text
     legend.append("text").attr("class", "text1")
         .attr("x", width - 24)
-        .attr("y", 438)
+        .attr("y", 458)
         .attr("dy", ".65em")
         .style("text-anchor", "end")
         .text(function(d) { return d;})
@@ -377,8 +383,8 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       //legend title happiness
     var legendTitle1 = g.append("text").attr("class", "text2")
-        .attr("x", width - 30)
-        .attr("y", 390)
+        .attr("x", width - 40)
+        .attr("y", 420)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text("Happiness Score");
@@ -392,27 +398,68 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend colored rectangles
       legend.append("rect")
-          .attr("x", width - 15)
-          .attr("y", 790)
+          .attr("x", width - 18)
+          .attr("y", 820)
           .attr("width", 24)
           .attr("height", 24)
           .style("fill", colorDevelop);
 
       // draw legend text
       legend.append("text").attr("class", "text1")
-          .attr("x", width - 24)
-          .attr("y", 795)
+          .attr("x", width - 28)
+          .attr("y", 828)
           .attr("dy", ".65em")
           .style("text-anchor", "end")
           .text(function(d) { return d;})
 
       //legend title Develop Status
       var legendTitle2 = g.append("text").attr("class", "text2")
-          .attr("x", width - 50)
-          .attr("y", 750)
+          .attr("x", width - 60)
+          .attr("y", 790)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
           .text("Develop Status");
+
+      var legendNull = svg.selectAll(".legendNull")
+          .data(nullLabel)
+          .enter().append("g")
+          .attr("class", "legendNull")
+          .attr("transform", function(d) { return "translate(-120," + 26 + ")"; });
+
+      var legendNull2 = legendNull;
+
+      // draw legend colored rectangles
+      legendNull.append("rect")
+          .attr("x", width - 18)
+          .attr("y", 686)
+          .attr("width", 24)
+          .attr("height", 24)
+          .style("fill", nullColour);
+
+      // draw legend text
+      legendNull.append("text").attr("class", "text1")
+          .attr("x", width - 24)
+          .attr("y", 696)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+      // draw legend colored rectangles
+      legendNull2.append("rect")
+          .attr("x", width - 18)
+          .attr("y", 312)
+          .attr("width", 24)
+          .attr("height", 24)
+          .style("fill", nullColour);
+
+      // draw legend text
+      legendNull2.append("text").attr("class", "text1")
+          .attr("x", width - 24)
+          .attr("y", 320)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
 
       svg.append('g')
           .attr('class', 'scatter')

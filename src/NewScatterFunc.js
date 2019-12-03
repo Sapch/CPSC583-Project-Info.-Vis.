@@ -4,7 +4,7 @@ function showScatterplot(clickedCountries) {
   let width = document.body.clientWidth, height = 1200,
     scatterWidth = 1800, scatterHeight = 1100;
     margin = {top: 70, right: 300, bottom: 70, left: 100},
-    circleSize = [3, 8],
+    circleSize = [3, 5, 8],
     keys = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"],
     darkLayer = d3.select('.scatter'),
     myColor = d3.scaleOrdinal(d3.schemeSet1);
@@ -38,7 +38,7 @@ function showScatterplot(clickedCountries) {
     });
 
   // create a clipping region
-  scatterplot.append("defs").append("clipPath")
+  scatterplot.append("g").append("clipPath")
     .attr("id", "clipper")
     .append("rect")
     .attr('x', margin.left)
@@ -49,7 +49,7 @@ function showScatterplot(clickedCountries) {
     //y axis title
   scatterplot.append("text")
     .attr("transform", "rotate(-90)")
-    .attr('y', 50)
+    .attr('y', 35)
     .attr('x', -scatterHeight/2)
     .attr("fill", "#000")
     .attr("font-weight", "bold")
@@ -106,7 +106,8 @@ function showScatterplot(clickedCountries) {
       .attr("cx",  scatterWidth-180)
       .attr("cy", function(d,i) {
         if (i == 0) return 500;
-        return  450 + ((d**1.8)*2) + (i*50);
+        if(i == 2) return 640;
+        return  450 + ((d**1.8)*2) + (i*65);
       })
       .attr("r", function(d){
         return d**1.8
@@ -124,7 +125,8 @@ function showScatterplot(clickedCountries) {
       .attr("x",  scatterWidth-120)
       .attr("y", function(d,i){
         if (i == 0) return 510;
-        return  460 + ((d**1.8)*2) + (i*50);
+          if(i == 2) return 650;
+        return  460 + ((d**1.8)*2) + (i*65);
       })
       .text(function(d){ return d;})
       .style("fill", "#000")
@@ -183,12 +185,16 @@ function showScatterplot(clickedCountries) {
     // Draw Datapoints
     var circlesG = scatterplot.append("g")
       .attr("clip-path", "url(#clipper)")
-      .classed("circlesG", true);
+      .classed("circlesG", false);
 
-    var circles = circlesG.selectAll("circle")
+      var circlesG1 = scatterplot.append("g");
+          //.classed("circlesG", true);
+
+    var circles = circlesG.selectAll(".dot")
       .data(data)
       .enter()
       .append("circle")
+        .attr("class", d => { return "dot COUNTRY-"+ d.Country; } )
         .attr('cx', function(d) {return xScale(d.Gini)})
         .attr('cy', function(d) {return yScale(d.GDP/1000)})
         .attr("r", function (d) { return zScale(d.Happiness ** 1.8); } )
@@ -196,6 +202,78 @@ function showScatterplot(clickedCountries) {
         .style("opacity", "0.7")
         .attr("stroke", "black")
         .style("stroke-width", "2px");
+        // .on("mouseover", function(d) {
+        //     var xPosition = d3.mouse(this)[0];
+        //     var yPosition = d3.mouse(this)[1]-40;
+        //
+        //     console.log("hello")
+        //     tooltip.transition()
+        //         .duration(100)
+        //         .style("opacity", 0.9);
+        //
+        //     tooltip.html(d.Happiness)
+        //         .style("left", (d3.event.pageX) + "px")
+        //         .style("font-size", "17px")
+        //         .style("font-weight", "bold")
+        //         .style("top", (d3.event.pageY - 28) + "px");
+        //
+        //     // scatterplot.select('.tooltipText')
+        //     //     .attr("x", xPosition)
+        //     //     .attr("y", yPosition)
+        //     //     .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)
+        //     //     .style("display", "inline");
+        // })
+        // .on("mouseout", function() {
+        //     scatterplot.select('.tooltipText')
+        //         .style("display", "none");
+        // });
+
+   //     drawCircles();
+
+      function drawCircles() {
+          circlesG1.selectAll(".dot")
+              .data(data)
+              .enter()
+              .append("circle")
+              .attr("class", d => {return "dot"})
+              .attr('cx', function (d) {return xScale(d.Gini)})
+              .attr('cy', function (d) {return yScale(d.GDP / 1000)})
+              .attr("r", function (d) {return zScale(d.Happiness ** 1.8);})
+              // .style("fill", function (d) {
+              //     return myColor(d.Continent);
+              // })
+               .style("opacity", "0.7")
+               .attr("stroke", "black")
+               .style("stroke-width", "2px")
+              .attr("fill", "transparent")
+              .style('cursor', 'pointer')
+              .on('mouseover', function (d) {
+                  var xPosition = d3.mouse(this)[0];
+                  var yPosition = d3.mouse(this)[1] - 40;
+
+                  console.log("hello")
+                  tooltip.transition()
+                      .duration(100)
+                      .style("opacity", 0.9);
+
+                  tooltip.html(d.Happiness)
+                      .style("left", (d3.event.pageX) + "px")
+                      .style("font-size", "17px")
+                      .style("font-weight", "bold")
+                      .style("top", (d3.event.pageY - 28) + "px");
+
+                  // scatterplot.select('.tooltipText')
+                  //     .attr("x", xPosition)
+                  //     .attr("y", yPosition)
+                  //     .text(d.Country  + " Happiness Score: " + Math.round(parseFloat(d.Happiness)*100)/100)
+                  //     .style("display", "inline");
+              })
+              .on("mouseout", function () {
+                  scatterplot.select('.tooltipText')
+                      .style("display", "none");
+              });
+      }
+
 
     // Pan and zoom
     var zoom = d3.zoom()
