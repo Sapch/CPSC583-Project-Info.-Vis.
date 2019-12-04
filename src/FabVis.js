@@ -190,7 +190,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
           .duration(100)
           .style("opacity", 0.9);
 
-        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + living1 +
+        tooltip.html(d.properties.name +  "<br />" + "Cost of Living Index: " + living1 +
               "<br />" + "Happiness Score: " +  happy1)
           .style("left", (d3.event.pageX) + "px")
           .style("font-size", "17px")
