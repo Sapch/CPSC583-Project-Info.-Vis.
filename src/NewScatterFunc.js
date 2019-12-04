@@ -1,6 +1,8 @@
 
 function showScatterplot(clickedCountries) {
 
+  d3.select('.instructDiv').style('opacity', 0);
+
   let width = document.body.clientWidth, height = 1200,
     scatterWidth = 1800, scatterHeight = 1100;
     margin = {top: 70, right: 300, bottom: 70, left: 100},
@@ -14,6 +16,8 @@ function showScatterplot(clickedCountries) {
     .attr('width', scatterWidth)
     .attr('height', scatterHeight)
     .attr("transform", 'translate('+((width/2)-900)+',50)');
+
+    var tooltip = d3.select(".tooltip");
 
   //scatterplot background
   scatterplot.append('rect')
@@ -35,6 +39,7 @@ function showScatterplot(clickedCountries) {
     .on('click', () => {
       scatterplot.remove();
       darkLayer.style('visibility', 'hidden');
+      d3.select('.instructDiv').style('opacity', 1);
     });
 
   // create a clipping region
@@ -144,8 +149,6 @@ function showScatterplot(clickedCountries) {
     .attr("text-anchor", "start")
     .attr("font-weight", "bold");
 
-  var tooltip = d3.select(".tooltip");
-
   d3.csv("Data-id.csv").then( function(data) {
 
     var yTicks = 14;
@@ -202,7 +205,6 @@ function showScatterplot(clickedCountries) {
       .attr("clip-path", "url(#clipper)")
       .classed("circlesG", true);
 
-
     var circles = circlesG.selectAll(".dot")
       .data(data)
       .enter()
@@ -212,7 +214,7 @@ function showScatterplot(clickedCountries) {
         .attr('cy', function(d) {return yScale(d.GDP/1000)})
         .attr("r", function (d) { return zScale(d.Happiness ** 1.8); } )
         .style("fill", function (d) { return myColor(d.Continent); } )
-        .style("opacity", "0.7")
+        .style("opacity", "0.5")
         .attr("stroke", "black")
         .style("stroke-width", "2px");
         .on("mouseover", function(d) {
@@ -221,12 +223,16 @@ function showScatterplot(clickedCountries) {
             .duration(200)
             .style("opacity", 1)
 
-          let dHappiness = +d.properties.happiness;
-          let dGini = +d.properties.Gini;
-          let dGDP = +d.properties.GDP;
+        tooltip.transition()
+            .duration(100)
+            .style("opacity", 0.9);
 
-          tooltip.html(d.properties.name +  "<br />"  +  "Happiness Score: " + dHappiness.toFixed(3) +
-            "<br />" + "GDP: " + dGDP.toFixed(3) + "Gini: " + dGini.toFixed(3))
+          let dHappiness = +d.happiness;
+          let dGini = +d.Gini;
+          let dGDP = +d.GDP/1000;
+
+          tooltip.html(d.Country +  "<br />"  +  "Happiness Score: " + dHappiness.toFixed(3) +
+            "<br />" + "GDP: " + dGDP.toFixed(3) + "<br />" + "Gini: " + dGini.toFixed(3))
             .style("left", (d3.event.pageX+10) + "px")
             .style("font-size", "17px")
             .style("font-weight", "bold")
@@ -237,7 +243,7 @@ function showScatterplot(clickedCountries) {
           d3.select(this)
             .transition()
             .duration(200)
-            .style("opacity", 0.7)
+            .style("opacity", 0.5)
 
           tooltip.transition()
             .duration(200)

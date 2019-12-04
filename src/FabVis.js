@@ -56,6 +56,12 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
       .attr("class", "tooltip")
       .style("opacity", 0);
 
+  var instructRect = d3.select("body").append("div")
+      .attr("class", "instructDiv")
+      .html("write here the instructions!")
+      .style('top', 350+'px')
+      .style('left', 20+'px');
+
   var data = d3.map();
 
   var dev = ["Developed", "Developing", "Underdeveloped"];

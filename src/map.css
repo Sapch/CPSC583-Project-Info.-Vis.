@@ -12,13 +12,23 @@
 	margin: auto;
 }
 
-div.tooltip {
+.tooltip {
 	position: absolute;
 	text-align: left;
 	padding: 10px;
 	font: 17px sans-serif;
 	background: #ffffff;
 	border: 0;
+	pointer-events: none;
+	border-radius: 6px;
+}
+
+.instructDiv {
+	position: absolute;
+	text-align: left;
+	padding: 10px;
+	font: 25px sans-serif;
+	border: 0px;
 	pointer-events: none;
 	border-radius: 6px;
 }
