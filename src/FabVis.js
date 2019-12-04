@@ -1,18 +1,22 @@
 let width, clickedCountries;
 let height = 1200;
-let bColours =  ["#ff00bf", "#ff842b", "#d32655", "#589428",
-                "#6e6e71"];
+let bColours =  ["#ff00bf", "#ff842b", "#589428", "#d32655",
+                "#727275"];
 let mColours = ["#efed37", "#ff8e0f", "#f2080d"];
 
 let buttons = [{label: "Scatterplot", class: "compare"},
                 {label: "Development Status", class: "dev-status"},
-                {label: "Happiness Index", class: "happy"},
-                {label: "Living Index", class: "livindex"},
+                {label: "Happiness Score", class: "happy"},
+                {label: "Cost of Living Index", class: "livindex"},
                 {label: "Reset", class: "reset"}];
 
 var legend, hoverData, legendTitle;
 var nullColour = '#ffffff';
-var nullLabel = ["NULL"];
+var nullLabel = ["No Data"];
+var HappyLabel = ["Happy"];
+var Unhappy = ["Unhappy"];
+var ExpensiveLabel = ["Expensive"];
+var CheapLabel = ["Cheap"];
 
 var prevColours;
 
@@ -30,7 +34,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
   let svg = d3.select("svg")
     .attr('width', width)
     .attr('height', height)
-    .style("background-color","#8cbdde");
+        .style("background-color","#7d9dd7");
 
 
   var projection = d3.geoMercator().translate([width/2.1, height-(height/3)]).scale(width/11);
@@ -58,8 +62,10 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
   var instructRect = d3.select("body").append("div")
       .attr("class", "instructDiv")
-      .html("write here the instructions!")
-      .style('top', 350+'px')
+      .html("Click on the countries you want to compare" + "<br />" + "and hit the Scatterplot button below to fire" +
+          "<br />" + " a new vis, or click on " +
+          "the other buttons" + "<br />" + "and see how the map changes")
+      .style('top', 800+'px')
       .style('left', 20+'px');
 
   var data = d3.map();
@@ -72,15 +78,13 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
     const colorHappy = d3.scaleThreshold()
       .domain([3 , 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5]) //10 Colours
-      .range(['#ffffb9', '#ffe490', '#ffc773', '#ffa85f',
-                '#f78c53', '#ea7049', '#da5640', '#c63d35',
-                '#b02628', '#961017', '#7a0000']);
+      .range(['#250000', '#3d100a', '#542210', '#5f3d0f', '#206500', '#267d0a', '#2c9513', '#2fae19', '#2fc81c', '#27e319', '#00ff00']);
 
   const colorLiving = d3.scaleThreshold()
       .domain([20 , 30, 40, 50, 60, 70, 80, 90, 100, 110, 120]) //12 Colours
-      .range(['#d7d1b0', '#c1c586', '#9bbe4c', '#84b040',
-                '#6da233', '#589428', '#43861d', '#2f7812',
-                '#1b6a08', '#085b02', '#004d00']);
+      .range(['#ffffb9', '#ffe490', '#ffc773', '#ffa85f',
+          '#f78c53', '#ea7049', '#da5640', '#c63d35',
+          '#b02628', '#961017', '#7a0000']);
 
   // load data
   var worldmap = d3.json("Geo-Data.geojson");
@@ -169,13 +173,25 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         //let happy1 = parseFloat(happy).toFixed(3);
         var living = +d.properties.livingIndex;
         //let living1 = parseFloat(living).toFixed(3);
+        let happy1, living1;
+
+        if(happy == 0)
+            happy1 = "No Data"
+        else
+            happy1 = happy.toFixed(3)
+
+        if(living == 0)
+            living1 = "No Data"
+        else
+            living1 = living.toFixed(3)
+
 
         tooltip.transition()
           .duration(100)
           .style("opacity", 0.9);
 
-        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + (living1.toFixed(3)) +
-              "<br />" + "Happiness Score: " + (happy1.toFixed(3))
+        tooltip.html(d.properties.name +  "<br />" + "Cost Living Index: " + living1 +
+              "<br />" + "Happiness Score: " +  happy1)
           .style("left", (d3.event.pageX) + "px")
           .style("font-size", "17px")
           .style("font-weight", "bold")
@@ -335,7 +351,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
     // draw legend colored rectangles
     legend.append("rect")
-        .attr("x", width - 18)
+        .attr("x", width - 58)
         .attr("y", 450)
         .attr("width", 24)
         .attr("height", 24)
@@ -343,7 +359,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
     // draw legend text
     legend.append("text").attr("class", "text1")
-        .attr("x", width - 24)
+        .attr("x", width)
         .attr("y", 458)
         .attr("dy", ".65em")
         .style("text-anchor", "end")
@@ -358,7 +374,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
     // draw legend colored rectangles
     legend1.append("rect")
-        .attr("x", width - 18)
+        .attr("x", width - 58)
         .attr("y", 50)
         .attr("width", 24)
         .attr("height", 24)
@@ -366,7 +382,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
     // draw legend text
     legend1.append("text").attr("class", "text1")
-        .attr("x", width - 24)
+        .attr("x", width)
         .attr("y", 64)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
@@ -375,7 +391,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       //legend title cost of living
     var legendTitle = g.append("text").attr("class", "text2")
-        .attr("x", width - 30)
+        .attr("x", width - 70)
         .attr("y", 16)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
@@ -383,7 +399,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       //legend title happiness
     var legendTitle1 = g.append("text").attr("class", "text2")
-        .attr("x", width - 40)
+        .attr("x", width - 80)
         .attr("y", 420)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
@@ -398,7 +414,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend colored rectangles
       legend.append("rect")
-          .attr("x", width - 18)
+          .attr("x", width - 58)
           .attr("y", 820)
           .attr("width", 24)
           .attr("height", 24)
@@ -406,15 +422,69 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend text
       legend.append("text").attr("class", "text1")
-          .attr("x", width - 28)
+          .attr("x", width - 68)
           .attr("y", 828)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+      var legendTags = svg.selectAll(".legendTag")
+          .data(Unhappy)
+          .enter().append("g")
+          .attr("class", "legendTag")
+          .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
+
+      var legendTags1 = svg.selectAll(".legendTag1")
+          .data(HappyLabel)
+          .enter().append("g")
+          .attr("class", "legendTag")
+          .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
+
+      var legendTags2 = svg.selectAll(".legendTag2")
+          .data(CheapLabel)
+          .enter().append("g")
+          .attr("class", "legendTag")
+          .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
+
+      var legendTags3 = svg.selectAll(".legendTag3")
+          .data(ExpensiveLabel)
+          .enter().append("g")
+          .attr("class", "legendTag")
+          .attr("transform", function(d, i) { return "translate(-120," + i * 26 + ")"; });
+
+      legendTags2.append("text").attr("class", "text1")
+          .attr("x", width - 65)
+          .attr("y", 58)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+      legendTags3.append("text").attr("class", "text1")
+          .attr("x", width - 65)
+          .attr("y", 317)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+
+      legendTags1.append("text").attr("class", "text1")
+          .attr("x", width - 65)
+          .attr("y", 690)
+          .attr("dy", ".65em")
+          .style("text-anchor", "end")
+          .text(function(d) { return d;})
+
+
+      legendTags.append("text").attr("class", "text1")
+          .attr("x", width - 65)
+          .attr("y", 458)
           .attr("dy", ".65em")
           .style("text-anchor", "end")
           .text(function(d) { return d;})
 
       //legend title Develop Status
       var legendTitle2 = g.append("text").attr("class", "text2")
-          .attr("x", width - 60)
+          .attr("x", width - 100)
           .attr("y", 790)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
@@ -430,7 +500,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend colored rectangles
       legendNull.append("rect")
-          .attr("x", width - 18)
+          .attr("x", width - 58)
           .attr("y", 686)
           .attr("width", 24)
           .attr("height", 24)
@@ -438,7 +508,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend text
       legendNull.append("text").attr("class", "text1")
-          .attr("x", width - 24)
+          .attr("x", width - 64)
           .attr("y", 696)
           .attr("dy", ".65em")
           .style("text-anchor", "end")
@@ -446,7 +516,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend colored rectangles
       legendNull2.append("rect")
-          .attr("x", width - 18)
+          .attr("x", width - 58)
           .attr("y", 312)
           .attr("width", 24)
           .attr("height", 24)
@@ -454,7 +524,7 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
 
       // draw legend text
       legendNull2.append("text").attr("class", "text1")
-          .attr("x", width - 24)
+          .attr("x", width - 64)
           .attr("y", 320)
           .attr("dy", ".65em")
           .style("text-anchor", "end")

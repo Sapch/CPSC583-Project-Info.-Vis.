@@ -216,7 +216,7 @@ function showScatterplot(clickedCountries) {
         .style("fill", function (d) { return myColor(d.Continent); } )
         .style("opacity", "0.5")
         .attr("stroke", "black")
-        .style("stroke-width", "2px");
+        .style("stroke-width", "2px")
         .on("mouseover", function(d) {
           d3.select(this)
             .transition()
@@ -227,9 +227,11 @@ function showScatterplot(clickedCountries) {
             .duration(100)
             .style("opacity", 0.9);
 
-          let dHappiness = +d.happiness;
+          let dHappiness = +d.Happiness;
           let dGini = +d.Gini;
           let dGDP = +d.GDP/1000;
+
+            console.log(dHappiness)
 
           tooltip.html(d.Country +  "<br />"  +  "Happiness Score: " + dHappiness.toFixed(3) +
             "<br />" + "GDP: " + dGDP.toFixed(3) + "<br />" + "Gini: " + dGini.toFixed(3))
