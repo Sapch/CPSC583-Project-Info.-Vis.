@@ -110,7 +110,7 @@ function showScatterplot(clickedCountries) {
     .append("circle")
       .attr("cx",  scatterWidth-180)
       .attr("cy", function(d,i) {
-        if (i == 0) return 500;
+        if (i == 0) return 510;
         if(i == 2) return 610;
         return  450 + ((d**1.8)*2) + (i*65);
       })
@@ -129,7 +129,7 @@ function showScatterplot(clickedCountries) {
     .append("text")
       .attr("x",  scatterWidth-125)
       .attr("y", function(d,i){
-        if (i == 0) return 510;
+        if (i == 0) return 500;
           if(i == 2) return 620;
           if(i==4) return 780;
         return  460 + ((d**1.8)*2) + (i*65);
