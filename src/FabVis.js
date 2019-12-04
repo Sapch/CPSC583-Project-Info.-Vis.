@@ -178,12 +178,12 @@ var nullC = ["AFG", "ATA", "BLZ", "BEN","BMU","BTN","BOL","BIH","BRN","BFA","BDI
         if(happy == 0)
             happy1 = "No Data"
         else
-            happy1 = happy.toFixed(3)
+            happy1 = happy.toFixed(2)
 
         if(living == 0)
             living1 = "No Data"
         else
-            living1 = living.toFixed(3)
+            living1 = living.toFixed(2)
 
 
         tooltip.transition()

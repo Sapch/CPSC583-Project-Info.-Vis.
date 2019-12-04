@@ -6,7 +6,7 @@ function showScatterplot(clickedCountries) {
   let width = document.body.clientWidth, height = 1200,
     scatterWidth = 1800, scatterHeight = 1100;
     margin = {top: 70, right: 300, bottom: 70, left: 100},
-    circleSize = [3, 5, 8],
+    circleSize = ['Unhappy','3', '5', '8', 'Happy'],
     keys = ["Africa", "Asia", "Europe", "North America", "South America", "Oceania"],
     darkLayer = d3.select('.scatter'),
     myColor = d3.scaleOrdinal(d3.schemeSet1);
@@ -60,7 +60,7 @@ function showScatterplot(clickedCountries) {
     .attr("font-weight", "bold")
     .attr("font-size", 32)
     .attr("text-anchor", "middle")
-    .text("GDP per Capita");
+    .text("GDP per Capita (K)");
 
     //x axis title
   scatterplot.append("text")
@@ -70,7 +70,7 @@ function showScatterplot(clickedCountries) {
     .attr("font-size", 32)
     .attr("font-weight", "bold")
     .attr("text-anchor", "middle")
-    .text("Gini Coefficient (Economic Inequality)");
+    .text("Gini Coefficient (Higher values represent economic inequality)");
 
     //legend rectangles
   var size = 30
@@ -111,7 +111,7 @@ function showScatterplot(clickedCountries) {
       .attr("cx",  scatterWidth-180)
       .attr("cy", function(d,i) {
         if (i == 0) return 500;
-        if(i == 2) return 640;
+        if(i == 2) return 610;
         return  450 + ((d**1.8)*2) + (i*65);
       })
       .attr("r", function(d){
@@ -127,15 +127,19 @@ function showScatterplot(clickedCountries) {
     .data(circleSize)
     .enter()
     .append("text")
-      .attr("x",  scatterWidth-120)
+      .attr("x",  scatterWidth-125)
       .attr("y", function(d,i){
         if (i == 0) return 510;
-          if(i == 2) return 650;
+          if(i == 2) return 620;
+          if(i==4) return 780;
         return  460 + ((d**1.8)*2) + (i*65);
       })
-      .text(function(d){ return d;})
+      .text(function(d,i){
+          /*if(i==0) return d + " Unhappy"
+              if(i==2) return d + " Happy"*/
+          return d;})
       .style("fill", "#000")
-      .attr("font-size", 32)
+      .attr("font-size", 24)
       .attr("text-anchor", "start")
       .attr("font-weight", "bold");
 
@@ -145,7 +149,7 @@ function showScatterplot(clickedCountries) {
     .attr("y", 440)
     .text("Happiness Score")
     .style("fill", "#000")
-    .attr("font-size", 30)
+    .attr("font-size", 28)
     .attr("text-anchor", "start")
     .attr("font-weight", "bold");
 
@@ -233,8 +237,8 @@ function showScatterplot(clickedCountries) {
 
             console.log(dHappiness)
 
-          tooltip.html(d.Country +  "<br />"  +  "Happiness Score: " + dHappiness.toFixed(3) +
-            "<br />" + "GDP: " + dGDP.toFixed(3) + "<br />" + "Gini: " + dGini.toFixed(3))
+          tooltip.html(d.Country +  "<br />"  +  "Happiness Score: " + dHappiness.toFixed(2) +
+            "<br />" + "GDP: $" + dGDP.toFixed(3) + "K<br />" + "Gini: " + dGini.toFixed(2))
             .style("left", (d3.event.pageX+10) + "px")
             .style("font-size", "17px")
             .style("font-weight", "bold")
